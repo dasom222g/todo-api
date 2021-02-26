@@ -1,32 +1,25 @@
 // src/mocks/handlers.js
 import { rest } from 'msw'
 
+const todosKey:string = 'TODO_LIST'
+
 export const handlers = [
-  rest.get('/api/cart', (req, res, ctx) => {
+  // 데이터 준비
+  rest.get('/api/get-todos', (req, res, ctx) => {
+    const todoList:string | null = localStorage.getItem(todosKey)
     return res(
       ctx.status(200),
+      ctx.json(todoList)
+    )
+  }),
+
+  rest.post('/api/post-todos', (req, res, ctx) => {
+    if (typeof req.body === 'string') localStorage.setItem(todosKey, req.body)
+    return res(
       ctx.json({
-        items: [
-          {
-            userId: 1,
-            id: 1,
-            title: "delectus aut autem",
-            completed: false
-          },
-          {
-            userId: 1,
-            id: 2,
-            title: "quis ut nam facilis et officia qui",
-            completed: false
-          },
-          {
-            userId: 1,
-            id: 3,
-            title: "fugiat veniam minus",
-            completed: false
-          },
-        ]
-      })
+        todoList: req.body
+      }),
+      ctx.status(200)
     )
   })
 ]
