@@ -25,12 +25,6 @@ function App() {
 
   useEffect(() => {
     setCart(prev => ({...prev, state:'first set'}))
-    // const config = {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Accept' : 'application/json'
-    //   }
-    // }
     fetch('/api/cart', {
       headers: {
         'Content-Type': 'application/json',
