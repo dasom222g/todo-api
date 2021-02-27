@@ -6,7 +6,8 @@ const todosKey:string = 'TODO_LIST'
 export const handlers = [
   // 데이터 준비
   rest.get('/api/get-todos', (req, res, ctx) => {
-    const todoList:string | null = localStorage.getItem(todosKey)
+    let todoList:string | null = localStorage.getItem(todosKey)
+    if(todoList && typeof todoList === 'string') todoList = JSON.parse(todoList)
     return res(
       ctx.status(200),
       ctx.json(todoList)

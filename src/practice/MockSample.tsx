@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import useInputs from '../hook/useInputs';
 import { todosType } from '../type/type'
 
-export const MockPractice = () => {
+export const MockSample = () => {
   const [ form, onChange, reset ] = useInputs({
     id: 1,
     title: ''
@@ -81,4 +81,4 @@ export const MockPractice = () => {
   )
 }
 
-export default MockPractice
+export default MockSample

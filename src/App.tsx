@@ -1,14 +1,16 @@
 import React from 'react';
 import './App.css';
-import MockPractice from './practice/MockPractice';
-// import PromisePractice from './practice/PromisePractice';
+// import MockSample from './practice/MockSample';
+import ContextSample from './practice/ContextSample'
+// import PromiseSample from './practice/PromiseSample';
 
 function App() {
 
   return (
     <div className="wrap">
-      {/* <PromisePractice /> */}
-      <MockPractice />
+      {/* <PromiseSample /> */}
+      {/* <MockSample /> */}
+      <ContextSample />
     </div>
   )
 }

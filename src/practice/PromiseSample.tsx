@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const PromisePractice = () => {
+export const PromiseSample = () => {
   // const myPromise = new Promise((resolve, reject) => {
   //   setTimeout(() => {
   //     resolve('resolve함수의 던지는값이 사용하는 곳에서 result값이 됨')
@@ -55,4 +55,4 @@ export const PromisePractice = () => {
   )
 }
 
-export default PromisePractice
+export default PromiseSample
