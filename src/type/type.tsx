@@ -1,12 +1,12 @@
-export type stateType = 'loading' | 'success' | 'error'
+export type SampleStateType = 'loading' | 'success' | 'error'
 
-export type todoItemType = {
+export type SampleTodoItemType = {
   id: number,
   title: string
 }
 
-export type todosType = {
+export type SampleTodosType = {
   loading: boolean,
-  data: todoItemType | null,
-  state: stateType
+  data: SampleTodoItemType | null,
+  state: SampleStateType
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import useInputs from '../hook/useInputs';
-import { todosType } from '../type/type'
+import { SampleTodosType } from '../type/type'
 
 export const MockSample = () => {
   const [ form, onChange, reset ] = useInputs({
@@ -10,7 +10,7 @@ export const MockSample = () => {
 
   const { title } = form
 
-  const [todos, setTodos] = useState<todosType>({
+  const [todos, setTodos] = useState<SampleTodosType>({
     loading: true,
     data: null,
     state:'loading'
@@ -19,7 +19,7 @@ export const MockSample = () => {
   const { data : todoData } = todos
 
   const fetchData = useCallback(async () => {
-    const data = await fetch('/api/get-todos', {
+    const data = await fetch('/api/get-item', {
       headers: {
         'Content-Type': 'application/json',
         'Accept' : 'application/json'
@@ -42,7 +42,7 @@ export const MockSample = () => {
     if (todos) {
       const _todoList = {...todos.data, id: 1, title: title}
 
-      await fetch('/api/post-todos', {
+      await fetch('/api/post-item', {
         method: 'POST',
         body: JSON.stringify(_todoList)
       })

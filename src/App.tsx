@@ -1,8 +1,9 @@
 import React from 'react';
 import './App.css';
-// import MockSample from './practice/MockSample';
-import ContextSample from './practice/ContextSample'
 // import PromiseSample from './practice/PromiseSample';
+// import MockSample from './practice/MockSample';
+// import ContextSample from './practice/ContextSample'
+import UsersSample from './practice/UsersSample';
 
 function App() {
 
@@ -10,7 +11,8 @@ function App() {
     <div className="wrap">
       {/* <PromiseSample /> */}
       {/* <MockSample /> */}
-      <ContextSample />
+      {/* <ContextSample /> */}
+      <UsersSample />
     </div>
   )
 }
