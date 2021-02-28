@@ -1,17 +1,17 @@
 import { useReducer, useEffect, useCallback } from "react";
 
-type DataType = {
-  id: number,
-  title: string
-}
+// type DataType = {
+//   id: number,
+//   title: string
+// }
 
 type StateType = {
   isLoading: boolean,
-  data: DataType[] | null,
-  isError: object | null
+  data: any,
+  error: object | null
 }
 
-type ActionType = { type: 'LOADING'} | { type: 'SUCCESS', data:DataType[] } | { type: 'ERROR', error:object }
+type ActionType = { type: 'LOADING'} | { type: 'SUCCESS', data: any } | { type: 'ERROR', error:object }
 
 const reducer = (state: StateType, action: ActionType): StateType => {
   switch (action.type) {
@@ -20,32 +20,32 @@ const reducer = (state: StateType, action: ActionType): StateType => {
         ...state,
         isLoading: true,
         data: null,
-        isError: null
+        error: null
       }
     case 'SUCCESS' :
       return {
         ...state,
         isLoading: false,
         data: action.data,
-        isError: null
+        error: null
       }
     case 'ERROR' :
       return {
         ...state,
         isLoading: false,
         data: null,
-        isError: action.error
+        error: action.error
       }
     default:
       throw new Error(`unhandled action type ${action}`)
   }
 }
 
-function useAsync(callback: any, deps = [], skip = false):[StateType, () => void] {
+function useAsync(callback: any, deps:any[] = [], skip = false):[StateType, () => void] {
   const initialState: StateType = {
     isLoading: false,
     data: null,
-    isError: null
+    error: null
   }
 
   const [state, dispatch] = useReducer(reducer, initialState)

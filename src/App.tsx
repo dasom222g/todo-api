@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import { UsersProvider } from './practice/UserContextSample';
 // import PromiseSample from './practice/PromiseSample';
 // import MockSample from './practice/MockSample';
 // import ContextSample from './practice/ContextSample'
@@ -12,7 +13,9 @@ function App() {
       {/* <PromiseSample /> */}
       {/* <MockSample /> */}
       {/* <ContextSample /> */}
-      <UsersSample />
+      <UsersProvider>
+        <UsersSample />
+      </UsersProvider>
     </div>
   )
 }

@@ -23,6 +23,8 @@ const todoList:todoListType[] = [
   }
 ]
 
+// const todoIdArray:number[] = todoList.map(item => item.id)
+
 export const handlers = [
   // 데이터 준비
   rest.get('/api/get-item', (req, res, ctx) => {
@@ -47,9 +49,18 @@ export const handlers = [
   rest.get('/api/get-todos', (req, res, ctx) => {
     // let todoList:string | null = localStorage.getItem(SAMPLE_ITEM)
     // if(todoList && typeof todoList === 'string') todoList = JSON.parse(todoList)
+    console.log(todoList.map(item => `/api/get-todos/${item.id}`))
     return res(
       ctx.status(200),
       ctx.json(todoList)
+    )
+  }),
+  rest.get(`${todoList.map(item => `/api/get-todos/${item.id}`)[0]}`, (req, res, ctx) => {
+    // let todoList:string | null = localStorage.getItem(SAMPLE_ITEM)
+    // if(todoList && typeof todoList === 'string') todoList = JSON.parse(todoList)
+    return res(
+      ctx.status(200),
+      ctx.json(todoList.map(item => item)[0])
     )
   }),
 ]
