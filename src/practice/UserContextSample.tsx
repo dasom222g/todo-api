@@ -1,5 +1,6 @@
 import React, { createContext, Dispatch, useContext, useReducer } from 'react'
-import { header } from '../variable/variable'
+import * as api from './apiSample'
+import createAsyncDispatcher, { createAsyncHandler, initialAsyncState } from './asyncActionUtils'
 
 type StateType = {
   isLoading: boolean,
@@ -13,35 +14,9 @@ type StateTypeOuter = {
 }
 
 const initialState = {
-  users: {
-    isLoading: false,
-    data: null,
-    error: null
-  },
-  user: {
-    isLoading: false,
-    data: null,
-    error: null
-  }
+  users: initialAsyncState,
+  user: initialAsyncState
 }
-
-const loadingState = {
-  isLoading: true,
-  data: null,
-  error: null
-}
-
-const successState = (data: any) => ({
-  isLoading: false,
-  data,
-  error: null
-}) 
-
-const errorState = (error: object) => ({
-  isLoading: false,
-  data: null,
-  error: error
-})
 
 type ActionType = 
   | { type: 'GET_USERS_LOADING'} 
@@ -51,38 +26,19 @@ type ActionType =
   | { type: 'GET_USER_SUCCESS', data: any }
   | { type: 'GET_USER_ERROR', error:object }
 
+
+const usersHandler = createAsyncHandler('GET_USERS', 'users')
+const userHandler = createAsyncHandler('GET_USER', 'user')
 const UserReducer = (state: StateTypeOuter, action: ActionType): StateTypeOuter => {
   switch(action.type) {
     case 'GET_USERS_LOADING':
-      return {
-        ...state,
-        users: loadingState
-      }
     case 'GET_USERS_SUCCESS':
-      return {
-        ...state,
-        users: successState(action.data)
-      }
     case 'GET_USERS_ERROR':
-      return {
-        ...state,
-        users: errorState(action.error)
-      }
+      return usersHandler(state, action)
     case 'GET_USER_LOADING':
-      return {
-        ...state,
-        user: loadingState
-      }
     case 'GET_USER_SUCCESS':
-      return {
-        ...state,
-        user: successState(action.data)
-      }
     case 'GET_USER_ERROR':
-      return {
-        ...state,
-        user: errorState(action.error)
-      }
+      return userHandler(state, action)
     default:
       throw new Error(`unHandled type ${action}`)
   }
@@ -120,27 +76,9 @@ export function useUsersDispatch() {
   return dispatch
 }
 
-export async function getUsers (dispatch: Dispatch<ActionType>) {
-  dispatch( {type: 'GET_USERS_LOADING'} )
-  try {
-    const response = await fetch('/api/get-todos', header)
-    let responseData = await response.json()
-    dispatch( {type: 'GET_USERS_SUCCESS', data: responseData } )
-  } catch(e) {
-    dispatch( {type: 'GET_USERS_ERROR', error: e })
-  }
-}
+export const getUsers = createAsyncDispatcher('GET_USERS', api.getUsers)
+export const getUser = createAsyncDispatcher('GET_USER', api.getUser)
 
-export async function getUser (dispatch: Dispatch<ActionType>, id: number) {
-  dispatch( {type: 'GET_USER_LOADING'} )
-  try {
-    const response = await fetch(`/api/get-todos/${id}`, header)
-    let responseData = await response.json()
-    dispatch( {type: 'GET_USER_SUCCESS', data: responseData } )
-  } catch(e) {
-    dispatch( {type: 'GET_USER_ERROR', error: e })
-  }
-}
 
 
 

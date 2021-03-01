@@ -37,7 +37,14 @@ function UsersSample() {
         {users.map(item => {
           return (
             <li key={item.id}>
-              <button type="button" onClick={() => setUserId(item.id)}>
+              <button
+                type="button"
+                onClick={() => 
+                  {
+                    setUserId(item.id)
+                  }
+                }
+              >
                 {item.title}
               </button>
             </li>

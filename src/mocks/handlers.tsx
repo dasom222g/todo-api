@@ -49,18 +49,17 @@ export const handlers = [
   rest.get('/api/get-todos', (req, res, ctx) => {
     // let todoList:string | null = localStorage.getItem(SAMPLE_ITEM)
     // if(todoList && typeof todoList === 'string') todoList = JSON.parse(todoList)
-    console.log(todoList.map(item => `/api/get-todos/${item.id}`))
     return res(
       ctx.status(200),
       ctx.json(todoList)
     )
   }),
-  rest.get(`${todoList.map(item => `/api/get-todos/${item.id}`)[0]}`, (req, res, ctx) => {
+  rest.get(`/api/get-todos/1`, (req, res, ctx) => {
     // let todoList:string | null = localStorage.getItem(SAMPLE_ITEM)
     // if(todoList && typeof todoList === 'string') todoList = JSON.parse(todoList)
     return res(
       ctx.status(200),
-      ctx.json(todoList.map(item => item)[0])
+      ctx.json(todoList[0])
     )
   }),
 ]
