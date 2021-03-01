@@ -9,6 +9,7 @@ import './assets/style/todo.scss'
 import {Switch, Route} from 'react-router-dom'
 import TodoHome from './pages/TodoHome';
 import TodoUpdate from './pages/TodoUpdate';
+import { TodoProvider } from './context/TodoContext';
 
 function App() {
 
@@ -21,22 +22,24 @@ function App() {
         <UsersSample />
       </UsersProvider> */}
       <div className="todo">
-        <Switch>
-          <Route
-            path="/"
-            render={() =>
-              <TodoHome />
-            }
-            exact
-          />
-          <Route
-            path="/update"
-            render={() =>
-              <TodoUpdate />
-            }
-          />
-          <Route path="/">Not found</Route>
-        </Switch>
+        <TodoProvider>
+          <Switch>
+            <Route
+              path="/"
+              render={() =>
+                <TodoHome />
+              }
+              exact
+            />
+            <Route
+              path="/update"
+              render={() =>
+                <TodoUpdate />
+              }
+            />
+            <Route path="/">Not found</Route>
+          </Switch>
+        </TodoProvider>
       </div>
     </div>
   )
