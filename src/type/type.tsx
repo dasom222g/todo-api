@@ -10,3 +10,20 @@ export type SampleTodosType = {
   data: SampleTodoItemType | null,
   state: SampleStateType
 }
+
+export type FormType = {
+  title: string
+}
+
+export type TodoListType = {
+  id: number,
+  title: string,
+  description: string,
+  isComplete: boolean
+}
+
+export type AsyncType = {
+  isLoading: boolean,
+  data:TodoListType[] | null,
+  error: object | null
+}
