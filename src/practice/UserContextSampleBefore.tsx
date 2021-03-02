@@ -35,7 +35,7 @@ const successState = (data: any) => ({
   isLoading: false,
   data,
   error: null
-}) 
+})
 
 const errorState = (error: object) => ({
   isLoading: false,
@@ -43,11 +43,11 @@ const errorState = (error: object) => ({
   error: error
 })
 
-type ActionType = 
-  | { type: 'GET_USERS_LOADING'} 
+type ActionType =
+  | { type: 'GET_USERS_LOADING'}
   | { type: 'GET_USERS_SUCCESS', data: any }
   | { type: 'GET_USERS_ERROR', error:object }
-  | { type: 'GET_USER_LOADING'} 
+  | { type: 'GET_USER_LOADING'}
   | { type: 'GET_USER_SUCCESS', data: any }
   | { type: 'GET_USER_ERROR', error:object }
 
@@ -93,7 +93,7 @@ const UsersDispatchContext = createContext<Dispatch<ActionType> | null>(null)
 
 type UserProviderProps = {
   children: React.ReactNode
-} 
+}
 
 export function UsersProvider({ children }:UserProviderProps) {
   const [state, dispatch] = useReducer(UserReducer, initialState)
@@ -123,7 +123,7 @@ export function useUsersDispatch() {
 export async function getUsers (dispatch: Dispatch<ActionType>) {
   dispatch( {type: 'GET_USERS_LOADING'} )
   try {
-    const response = await fetch('/api/get-todos', header)
+    const response = await fetch('/api/get-data', header)
     let responseData = await response.json()
     dispatch( {type: 'GET_USERS_SUCCESS', data: responseData } )
   } catch(e) {
@@ -134,7 +134,7 @@ export async function getUsers (dispatch: Dispatch<ActionType>) {
 export async function getUser (dispatch: Dispatch<ActionType>, id: number) {
   dispatch( {type: 'GET_USER_LOADING'} )
   try {
-    const response = await fetch(`/api/get-todos/${id}`, header)
+    const response = await fetch(`/api/get-data/${id}`, header)
     let responseData = await response.json()
     dispatch( {type: 'GET_USER_SUCCESS', data: responseData } )
   } catch(e) {

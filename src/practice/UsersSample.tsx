@@ -6,7 +6,7 @@ import UserItem from './UserItemSample'
 
 //useAsync 관련 소스
 // const getUsers = async() => {
-//   const response = await fetch('/api/get-todos', header)
+//   const response = await fetch('/api/get-data', header)
 //   let responseData = await response.json()
 //   return responseData
 //   // responseData = typeof responseData === 'string' ? JSON.parse(responseData) : responseData
@@ -24,7 +24,7 @@ function UsersSample() {
   const fetchData = () => {
     getUsers(dispatch)
   }
-  
+
   if (isLoading) return <div>loading...</div>
   if (error) return <div>error..</div>
   if (!data) return <button type="button" onClick={fetchData}>불러오기</button>
@@ -39,7 +39,7 @@ function UsersSample() {
             <li key={item.id}>
               <button
                 type="button"
-                onClick={() => 
+                onClick={() =>
                   {
                     setUserId(item.id)
                   }

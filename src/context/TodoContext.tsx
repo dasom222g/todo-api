@@ -1,47 +1,84 @@
 import React, { createContext, Dispatch, useContext, useReducer } from 'react'
-import {AsyncType, TodoListType} from '../type/type'
+import {AsyncTodoType, TodoListType} from '../type/type'
 import { header } from '../variable/variable'
 
 const initialState = {
-  isLoading: false,
+  list: {
+    isLoading: false,
+    data: null,
+    error: null
+  },
+  item: {
+    isLoading: false,
+    data: null,
+    error: null
+  }
+}
+
+const loadingState = {
+  isLoading: true,
   data: null,
   error: null
 }
 
-export type ActionType = 
-  | { type: 'LOADING' }
-  | { type: 'SUCCESS', data: TodoListType[] }
-  | { type: 'ERROR', error: object }
+const successState = (data: any) => ({
+  isLoading: false,
+  data,
+  error: null
+})
 
-const reducer = (state: AsyncType, action: ActionType): AsyncType => {
+const errorState = (error: object) => ({
+  isLoading: false,
+  data: null,
+  error: error
+})
+
+export type ActionType =
+  | { type: 'LIST_LOADING' }
+  | { type: 'LIST_SUCCESS', data: TodoListType[] }
+  | { type: 'LIST_ERROR', error: object }
+  | { type: 'ITEM_LOADING' }
+  | { type: 'ITEM_SUCCESS', data: TodoListType }
+  | { type: 'ITEM_ERROR', error: object }
+
+const reducer = (state: AsyncTodoType, action: ActionType): AsyncTodoType => {
   switch (action.type) {
-    case 'LOADING':
+    case 'LIST_LOADING':
       return {
         ...state,
-        isLoading: true,
-        data: null,
-        error: null
+        list: loadingState
       }
-    case 'SUCCESS': 
+    case 'LIST_SUCCESS':
       return {
         ...state,
-        isLoading: false,
-        data: action.data,
-        error: null
+        list: successState(action.data)
       }
-    case 'ERROR':
+    case 'LIST_ERROR':
       return {
         ...state,
-        isLoading: false,
-        data: null,
-        error: action.error
+        list: errorState(action.error)
+      }
+    case 'ITEM_LOADING':
+      return {
+        ...state,
+        item: loadingState
+      }
+    case 'ITEM_SUCCESS':
+      return {
+        ...state,
+        item: successState(action.data)
+      }
+    case 'ITEM_ERROR':
+      return {
+        ...state,
+        item: errorState(action.error)
       }
     default:
       throw new Error(`unHandled action ${action}`)
   }
 }
 
-const TodoStateContext = createContext<AsyncType | null>(null)
+const TodoStateContext = createContext<AsyncTodoType | null>(null)
 const TodoDispatchContext = createContext<Dispatch<ActionType> | null>(null)
 
 type TodoProviderProps = {
@@ -72,12 +109,45 @@ export function useTodoDispatch () {
 }
 
 export async function getTodoList (dispatch: Dispatch<ActionType>) {
-  dispatch({ type: 'LOADING' })
+  dispatch({ type: 'LIST_LOADING' })
   try {
-    const response = await fetch('/api-get-todos', header)
+    const response = await fetch('/api/todos', header)
     let responseData = await response.json()
-    dispatch({type: 'SUCCESS', data: responseData})
+    dispatch({type: 'LIST_SUCCESS', data: responseData})
   } catch (e) {
-    dispatch({type: 'ERROR', error: e})
+    dispatch({type: 'LIST_ERROR', error: e})
+  }
+}
+
+export async function postTodoList (dispatch: Dispatch<ActionType>, todoList: TodoListType[], newItem?: TodoListType) {
+  try {
+    if (newItem) {
+      const _newTodoList = [...todoList, newItem]
+      await fetch('/api/todos', {
+        method: 'POST',
+        body: JSON.stringify(_newTodoList)
+      })
+    } else {
+      await fetch('/api/todos', {
+        method: 'POST',
+        body: JSON.stringify(todoList)
+      })
+    }
+    const response = await fetch('/api/todos', header)
+    let responseData = await response.json()
+    dispatch({type: 'LIST_SUCCESS', data: responseData})
+  } catch (e) {
+    dispatch({type: 'LIST_ERROR', error: e})
+  }
+}
+
+export async function getTodoItem (dispatch: Dispatch<ActionType>) {
+  dispatch({ type: 'ITEM_LOADING' })
+  try {
+    const response = await fetch('/api/todos', header)
+    let responseData = await response.json()
+    dispatch({type: 'ITEM_SUCCESS', data: responseData})
+  } catch (e) {
+    dispatch({type: 'ITEM_ERROR', error: e})
   }
 }

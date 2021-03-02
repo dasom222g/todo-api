@@ -1,14 +1,14 @@
 // src/mocks/handlers.js
 import { rest } from 'msw'
 
-type todoListType = {
+type SampleDataType = {
   id: number,
   title: string
 }
 
-const SAMPLE_ITEM:string = 'sampleItem'
+const KEY:string = 'TODO_LIST'
 
-const todoList:todoListType[] = [
+const sampleData:SampleDataType[] = [
   {
     id: 1,
     title: 'test1',
@@ -23,12 +23,10 @@ const todoList:todoListType[] = [
   }
 ]
 
-// const todoIdArray:number[] = todoList.map(item => item.id)
-
 export const handlers = [
   // 데이터 준비
   rest.get('/api/get-item', (req, res, ctx) => {
-    let item:string | null = localStorage.getItem(SAMPLE_ITEM)
+    let item:string | null = localStorage.getItem(KEY)
     if(item && typeof item === 'string') item = JSON.parse(item)
     return res(
       ctx.status(200),
@@ -37,7 +35,7 @@ export const handlers = [
   }),
 
   rest.post('/api/post-item', (req, res, ctx) => {
-    if (typeof req.body === 'string') localStorage.setItem(SAMPLE_ITEM, req.body)
+    if (typeof req.body === 'string') localStorage.setItem(KEY, req.body)
     return res(
       ctx.json({
         sampleItem: req.body
@@ -46,20 +44,37 @@ export const handlers = [
     )
   }),
 
-  rest.get('/api/get-todos', (req, res, ctx) => {
-    // let todoList:string | null = localStorage.getItem(SAMPLE_ITEM)
-    // if(todoList && typeof todoList === 'string') todoList = JSON.parse(todoList)
+  rest.get('/api/get-data', (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json(todoList)
+      ctx.json(sampleData)
     )
   }),
-  rest.get(`/api/get-todos/1`, (req, res, ctx) => {
-    // let todoList:string | null = localStorage.getItem(SAMPLE_ITEM)
-    // if(todoList && typeof todoList === 'string') todoList = JSON.parse(todoList)
+  rest.get(`/api/get-data/1`, (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json(todoList[0])
+      ctx.json(sampleData[0])
     )
   }),
+
+  // todo!!
+  rest.get('/api/todos', (req, res, ctx) => {
+    let item:string | null = localStorage.getItem(KEY)
+    if(item && typeof item === 'string') item = JSON.parse(item)
+    return res(
+      ctx.status(200),
+      ctx.json(item)
+    )
+  }),
+
+  rest.post('/api/todos', (req, res, ctx) => {
+    if (typeof req.body === 'string') localStorage.setItem(KEY, req.body)
+    return res(
+      ctx.json({
+        [KEY]: req.body
+      }),
+      ctx.status(200)
+    )
+  }),
+
 ]

@@ -5,7 +5,7 @@ import { getUser, useUsersDispatch, useUsersState } from './UserContextSample'
 
 //useAsync 관련 소스
 // const getUser = async(id: number) => {
-//   const response = await fetch(`/api/get-todos/${id}`, header)
+//   const response = await fetch(`/api/get-data/${id}`, header)
 //   let responseData = await response.json()
 //   return responseData
 //   // responseData = typeof responseData === 'string' ? JSON.parse(responseData) : responseData

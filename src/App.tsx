@@ -32,7 +32,7 @@ function App() {
               exact
             />
             <Route
-              path="/update"
+              path="/update/:itemId"
               render={() =>
                 <TodoUpdate />
               }

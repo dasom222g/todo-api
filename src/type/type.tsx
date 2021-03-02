@@ -12,7 +12,8 @@ export type SampleTodosType = {
 }
 
 export type FormType = {
-  title: string
+  title: string,
+  description: string
 }
 
 export type TodoListType = {
@@ -22,8 +23,23 @@ export type TodoListType = {
   isComplete: boolean
 }
 
-export type AsyncType = {
+type ListStateType = {
   isLoading: boolean,
-  data:TodoListType[] | null,
+  data: TodoListType[] | null,
   error: object | null
+}
+type ItemStateType = {
+  isLoading: boolean,
+  data: TodoListType | null,
+  error: object | null
+}
+
+export type AsyncTodoType = {
+  list: ListStateType,
+  item: ItemStateType
+}
+
+export const formInitialState = {
+  title: '',
+  description: ''
 }
