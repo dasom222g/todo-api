@@ -27,6 +27,7 @@ function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
   }
 
   const updateNote = (data: FormType) => {
+    console.log(data.description)
     setDescription(data.description)
   }
 
@@ -44,12 +45,22 @@ function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
     e.preventDefault()
     if (!selectedItem) {
       addTodo(form)
+      reset()
     } else {
-      updateTodo({...selectedItem, title, description})
+      if (window.confirm('Are you sure you wish to update this item?')) {
+        updateTodo({...selectedItem, title, description})
+        goHome()
+        reset()
+      }
+    }
+  }
+
+  const handleCancel = () => {
+    if (window.confirm('Are you sure to cancel?')) {
       goHome()
     }
-    reset()
   }
+
   return (
     <section>
       <div className="form" onSubmit={handleSubmit}>
@@ -91,6 +102,7 @@ function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
                 <button
                   type="button"
                   className="button-base button-base--cancel"
+                  onClick={handleCancel}
                 >
                   Cancel
                 </button>
