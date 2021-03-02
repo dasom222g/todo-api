@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import useInputs from '../hook/useInputs'
 import { FormType, TodoListType } from '../type/type'
 
@@ -16,10 +16,9 @@ function TodoDetailForm({selectedItem, updateNote}: TodoDetailFormProps) {
   const [form, onChange] = useInputs<FormType>(initialState)
   const {description} = form
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(e)
+  useEffect(() => {
     updateNote(form)
-  }
+  }, [updateNote, form])
 
   return (
     <div className="todo__detail-desc">
@@ -27,7 +26,7 @@ function TodoDetailForm({selectedItem, updateNote}: TodoDetailFormProps) {
         placeholder="Write a note.."
         name="description"
         value={description}
-        onChange={handleChange}
+        onChange={onChange}
       ></textarea>
     </div>
   )

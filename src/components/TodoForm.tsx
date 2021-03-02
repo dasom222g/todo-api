@@ -27,7 +27,6 @@ function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
   }
 
   const updateNote = (data: FormType) => {
-    console.log(data.description)
     setDescription(data.description)
   }
 
