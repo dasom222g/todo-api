@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import TodoForm from '../components/TodoForm'
 import { useTodoState, useTodoDispatch, postTodoList } from '../context/TodoContext'
 import { TodoListType } from '../type/type'
@@ -8,6 +9,11 @@ function TodoUpdate() {
   const dispatch = useTodoDispatch()
   const {data: todoList} = state.list
   const { isLoading, data: todoItem, error} = state.item
+
+  const location = useLocation()
+  const { pathname } = location
+  const itemId = pathname.split('/').reverse()[0];
+  console.log('itemId', itemId)
 
   const updateTodo = (updateItem: TodoListType) => {
     if (todoList) {

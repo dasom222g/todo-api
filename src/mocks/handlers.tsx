@@ -60,6 +60,7 @@ export const handlers = [
   // todo!!
   rest.get('/api/todos', (req, res, ctx) => {
     let item:string | null = localStorage.getItem(KEY)
+    console.log('fucking crazy : ',item)
     if(item && typeof item === 'string') item = JSON.parse(item)
     return res(
       ctx.status(200),
@@ -68,7 +69,17 @@ export const handlers = [
   }),
 
   rest.post('/api/todos', (req, res, ctx) => {
-    if (typeof req.body === 'string') localStorage.setItem(KEY, req.body)
+    if (typeof req.body === 'string') {
+      const store: string | null = localStorage.getItem('TODO_LIST');
+      if (store === null) {
+        const data = JSON.stringify([JSON.parse(req.body)]);
+        localStorage.setItem('TODO_LIST', data);
+      } else {
+        const data = JSON.stringify([ ...JSON.parse(store), JSON.parse(req.body) ]);
+        localStorage.setItem('TODO_LIST', data)
+      }
+    }
+
     return res(
       ctx.json({
         [KEY]: req.body

@@ -122,10 +122,9 @@ export async function getTodoList (dispatch: Dispatch<ActionType>) {
 export async function postTodoList (dispatch: Dispatch<ActionType>, todoList: TodoListType[], newItem?: TodoListType) {
   try {
     if (newItem) {
-      const _newTodoList = [...todoList, newItem]
       await fetch('/api/todos', {
         method: 'POST',
-        body: JSON.stringify(_newTodoList)
+        body: JSON.stringify(newItem)
       })
     } else {
       await fetch('/api/todos', {

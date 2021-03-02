@@ -11,7 +11,8 @@ type TodoFormProps = {
 }
 
 function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
-  const { history } = useReactRouter()
+  const { history, location } = useReactRouter()
+  console.log('location', location)
 
   const selectedInitialState = {
     title: selectedItem?.title,
@@ -22,7 +23,7 @@ function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
   const {title} = form
   const [description, setDescription] = useState(selectedItem ? selectedItem.description : '')
 
-  const goHome =():void => {
+  const goHome = ():void => {
     history.push('/')
   }
 
@@ -121,9 +122,9 @@ function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
 }
 
 TodoForm.defaultProps = {
+  selectedItem: null,
   addTodo: () => {},
   updateTodo: () => {},
-  selectedItem: null
 }
 
 export default TodoForm
