@@ -34,12 +34,14 @@ const errorState = (error: object) => ({
 })
 
 export type ActionType =
+  | { type: 'ADD_TODO', payload: TodoListType}
   | { type: 'GET_LIST_LOADING' }
   | { type: 'GET_LIST_SUCCESS', data: TodoListType[] }
   | { type: 'GET_LIST_ERROR', error: object }
   | { type: 'GET_ITEM_LOADING' }
   | { type: 'GET_ITEM_SUCCESS', data: TodoListType }
   | { type: 'GET_ITEM_ERROR', error: object }
+  
   // | { type: 'POST_ITEM_SUCCESS', data: TodoListType }
   // | { type: 'POST_ITEM_ERROR', error: object }
   // | { type: 'PUT_ITEM_SUCCESS', data: TodoListType }
@@ -49,11 +51,23 @@ export type ActionType =
 
 const reducer = (state: AsyncTodoType, action: ActionType): AsyncTodoType => {
   switch (action.type) {
+    case 'ADD_TODO':
+      return {
+        ...state,
+        list: {
+          isLoading: false,
+          error: null,
+          data: state.list.data && [...state.list.data, action.payload]
+        }
+      }
     case 'GET_LIST_LOADING':
       return {
         ...state,
-        list: loadingState
-      }
+          list: {
+            ...state.list,
+            isLoading: true,
+          }
+        }
     case 'GET_LIST_SUCCESS':
       return {
         ...state,
@@ -140,17 +154,17 @@ export async function getTodoItem (dispatch: Dispatch<ActionType>, id: number) {
   }
 }
 
-export async function postTodo (dispatch: Dispatch<ActionType>, newItem: TodoListType) {
+export async function postTodo (dispatch: Dispatch<ActionType>, newItem: {title: string; description: string}) {
   dispatch({ type: 'GET_LIST_LOADING' })
   await sleep(500)
   try {
-    await fetch('/api/todos', {
+    const response = await fetch('/api/todos', {
       method: 'POST',
       body: JSON.stringify(newItem),
     })
-    const response = await fetch('/api/todos', header)
     let responseData = await response.json()
-    dispatch({type: 'GET_LIST_SUCCESS', data: responseData})
+    dispatch({type: 'ADD_TODO', payload: responseData})
+    
   } catch (e) {
     dispatch({type: 'GET_LIST_ERROR', error: e})
   }

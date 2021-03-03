@@ -88,22 +88,23 @@ export const handlers = [
 
   rest.post('/api/todos', (req, res, ctx) => {
     if (typeof req.body === 'string') {
+      const id = Math.floor(Math.random()*99999);
+      const newTodo = {id, ...JSON.parse(req.body)}
       const store: string | null = localStorage.getItem(KEY)
       if (store === null) {
-        const data = JSON.stringify([JSON.parse(req.body)])
+        const data = JSON.stringify([newTodo])
         localStorage.setItem(KEY, data)
       } else {
-        const data = JSON.stringify([ ...JSON.parse(store), JSON.parse(req.body) ]);
+        const data = JSON.stringify([ ...JSON.parse(store), newTodo ]);
         localStorage.setItem(KEY, data)
       }
+      return res(
+        ctx.json(newTodo),
+        ctx.status(200)
+      )
     }
 
-    return res(
-      ctx.json({
-        [KEY]: req.body
-      }),
-      ctx.status(200)
-    )
+   return res(ctx.status(422))
   }),
 
   rest.put('/api/todos/:itemId', (req, res, ctx) => {
