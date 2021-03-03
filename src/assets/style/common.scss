@@ -187,3 +187,13 @@ input:disabled{
 .additional-item {
   margin-left: auto !important;
 }
+
+.loading {
+  margin-top: 50px;
+  >div {
+    text-align: center;
+  }
+  svg {
+    fill: $light-blue;
+  }
+}

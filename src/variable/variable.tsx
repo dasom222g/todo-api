@@ -4,3 +4,7 @@ export const header = {
     'Accept' : 'application/json'
   }
 }
+
+export const sleep = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}

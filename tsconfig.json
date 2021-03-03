@@ -22,5 +22,9 @@
   },
   "include": [
     "src"
-  ]
+  ],
+  // "files": [
+  //   "./node_modules/@types/react-loader-spinner/index.d.ts",
+  //   "./src/pages/TodoHome.tsx"
+  // ]
 }

@@ -1,53 +1,44 @@
-import React from 'react'
-import { useLocation } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import TodoForm from '../components/TodoForm'
-import { useTodoState, useTodoDispatch, postTodoList } from '../context/TodoContext'
+import { useTodoState, useTodoDispatch, getTodoItem, putTodo } from '../context/TodoContext'
 import { TodoListType } from '../type/type'
+import Loader from 'react-loader-spinner'
+import NotFound from '../components/NotFound'
 
 function TodoUpdate() {
   const state = useTodoState()
   const dispatch = useTodoDispatch()
-  const {data: todoList} = state.list
   const { isLoading, data: todoItem, error} = state.item
-
-  const location = useLocation()
-  const { pathname } = location
-  const itemId = pathname.split('/').reverse()[0];
-  console.log('itemId', itemId)
+  const { itemId } = useParams<{ itemId: string }>()
 
   const updateTodo = (updateItem: TodoListType) => {
-    if (todoList) {
-      const {title, description} = updateItem
-      const _todoList = [...todoList]
-      const updateList = _todoList.map(item => {
-        if (item.id === updateItem.id) {
-          return {
-            ...item,
-            title,
-            description
-          }
-        }
-        return {...item}
-      })
-      console.log('받은값', updateItem, '가공한 값', updateList)
-      dispatch({type: 'LIST_SUCCESS', data: updateList})
-      postTodoList(dispatch, updateList)
-    }
+    putTodo(dispatch, updateItem)
   }
 
-  if (isLoading) return <div>loading...</div>
-  if (error) return <div>error..</div>
+  useEffect(() => {
+    getTodoItem(dispatch, Number(itemId))
+  }, [dispatch, itemId])
+
+  if (error) return <NotFound />
 
   return (
     <>
       <header>
         <h2 className="todo__title">What’s the Plan for Today?</h2>
       </header>
-      {todoItem &&
-        <>
-          <TodoForm selectedItem={todoItem} updateTodo={updateTodo} />
-        </>
+      { isLoading ?
+        <div className="loading">
+          <Loader
+            height={100}
+            timeout={3000}
+            type="Circles"
+            visible={true}
+            width={80}
+          />
+        </div> : null
       }
+      { todoItem && <TodoForm selectedItem={todoItem} updateTodo={updateTodo} /> }
     </>
   )
 }

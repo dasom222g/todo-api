@@ -1,6 +1,6 @@
 import React, { createContext, Dispatch, useContext, useReducer } from 'react'
 import {AsyncTodoType, TodoListType} from '../type/type'
-import { header } from '../variable/variable'
+import { header, sleep } from '../variable/variable'
 
 const initialState = {
   list: {
@@ -34,41 +34,47 @@ const errorState = (error: object) => ({
 })
 
 export type ActionType =
-  | { type: 'LIST_LOADING' }
-  | { type: 'LIST_SUCCESS', data: TodoListType[] }
-  | { type: 'LIST_ERROR', error: object }
-  | { type: 'ITEM_LOADING' }
-  | { type: 'ITEM_SUCCESS', data: TodoListType }
-  | { type: 'ITEM_ERROR', error: object }
+  | { type: 'GET_LIST_LOADING' }
+  | { type: 'GET_LIST_SUCCESS', data: TodoListType[] }
+  | { type: 'GET_LIST_ERROR', error: object }
+  | { type: 'GET_ITEM_LOADING' }
+  | { type: 'GET_ITEM_SUCCESS', data: TodoListType }
+  | { type: 'GET_ITEM_ERROR', error: object }
+  // | { type: 'POST_ITEM_SUCCESS', data: TodoListType }
+  // | { type: 'POST_ITEM_ERROR', error: object }
+  // | { type: 'PUT_ITEM_SUCCESS', data: TodoListType }
+  // | { type: 'PUT_ITEM_ERROR', error: object }
+  // | { type: 'DELETE_ITEM_SUCCESS', data: TodoListType }
+  // | { type: 'DELETE_ITEM_ERROR', error: object }
 
 const reducer = (state: AsyncTodoType, action: ActionType): AsyncTodoType => {
   switch (action.type) {
-    case 'LIST_LOADING':
+    case 'GET_LIST_LOADING':
       return {
         ...state,
         list: loadingState
       }
-    case 'LIST_SUCCESS':
+    case 'GET_LIST_SUCCESS':
       return {
         ...state,
         list: successState(action.data)
       }
-    case 'LIST_ERROR':
+    case 'GET_LIST_ERROR':
       return {
         ...state,
         list: errorState(action.error)
       }
-    case 'ITEM_LOADING':
+    case 'GET_ITEM_LOADING':
       return {
         ...state,
         item: loadingState
       }
-    case 'ITEM_SUCCESS':
+    case 'GET_ITEM_SUCCESS':
       return {
         ...state,
         item: successState(action.data)
       }
-    case 'ITEM_ERROR':
+    case 'GET_ITEM_ERROR':
       return {
         ...state,
         item: errorState(action.error)
@@ -108,45 +114,72 @@ export function useTodoDispatch () {
   return dispatch
 }
 
+// api function
+
 export async function getTodoList (dispatch: Dispatch<ActionType>) {
-  dispatch({ type: 'LIST_LOADING' })
+  dispatch({ type: 'GET_LIST_LOADING' })
+  await sleep(500)
   try {
     const response = await fetch('/api/todos', header)
     let responseData = await response.json()
-    dispatch({type: 'LIST_SUCCESS', data: responseData})
+    dispatch({type: 'GET_LIST_SUCCESS', data: responseData})
   } catch (e) {
-    dispatch({type: 'LIST_ERROR', error: e})
+    dispatch({type: 'GET_LIST_ERROR', error: e})
   }
 }
 
-export async function postTodoList (dispatch: Dispatch<ActionType>, todoList: TodoListType[], newItem?: TodoListType) {
+export async function getTodoItem (dispatch: Dispatch<ActionType>, id: number) {
+  dispatch({ type: 'GET_ITEM_LOADING' })
+  await sleep(500)
   try {
-    if (newItem) {
-      await fetch('/api/todos', {
-        method: 'POST',
-        body: JSON.stringify(newItem)
-      })
-    } else {
-      await fetch('/api/todos', {
-        method: 'POST',
-        body: JSON.stringify(todoList)
-      })
-    }
-    const response = await fetch('/api/todos', header)
+    const response = await fetch(`/api/todos/${id}`, header)
     let responseData = await response.json()
-    dispatch({type: 'LIST_SUCCESS', data: responseData})
+    dispatch({type: 'GET_ITEM_SUCCESS', data: responseData})
   } catch (e) {
-    dispatch({type: 'LIST_ERROR', error: e})
+    dispatch({type: 'GET_ITEM_ERROR', error: e})
   }
 }
 
-export async function getTodoItem (dispatch: Dispatch<ActionType>) {
-  dispatch({ type: 'ITEM_LOADING' })
+export async function postTodo (dispatch: Dispatch<ActionType>, newItem: TodoListType) {
+  dispatch({ type: 'GET_LIST_LOADING' })
+  await sleep(500)
   try {
+    await fetch('/api/todos', {
+      method: 'POST',
+      body: JSON.stringify(newItem),
+    })
     const response = await fetch('/api/todos', header)
     let responseData = await response.json()
-    dispatch({type: 'ITEM_SUCCESS', data: responseData})
+    dispatch({type: 'GET_LIST_SUCCESS', data: responseData})
   } catch (e) {
-    dispatch({type: 'ITEM_ERROR', error: e})
+    dispatch({type: 'GET_LIST_ERROR', error: e})
   }
 }
+
+export async function putTodo (dispatch: Dispatch<ActionType>, item: TodoListType) {
+  try {
+    await fetch(`/api/todos/${item.id}`, {
+      method: 'PUT',
+      body : JSON.stringify(item),
+    })
+    const response = await fetch('/api/todos', header)
+    let responseData = await response.json()
+    dispatch({type: 'GET_LIST_SUCCESS', data: responseData})
+  } catch(e) {
+    dispatch({type: 'GET_LIST_ERROR', error: e})
+  }
+}
+
+export async function deleteTodo(dispatch: Dispatch<ActionType>, id: number) {
+  try {
+    await fetch(`/api/todos/${id}`, {
+      method: 'DELETE',
+    })
+    const response = await fetch('/api/todos', header)
+    let responseData = await response.json()
+    dispatch({type: 'GET_LIST_SUCCESS', data: responseData})
+  } catch (e) {
+    dispatch({type: 'GET_LIST_ERROR', error: e})
+  }
+}
+

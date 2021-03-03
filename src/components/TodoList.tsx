@@ -7,12 +7,11 @@ import { TodoListType } from '../type/type'
 
 type TodoListProps = {
   todoList: TodoListType[],
-  completeTodo: (id: number) => void,
+  completeTodo: (item: TodoListType) => void,
   removeTodo: (id: number) => void,
-  selectTodo: (item: TodoListType) => void
 }
 
-function TodoList({todoList, completeTodo, removeTodo, selectTodo}: TodoListProps) {
+function TodoList({todoList, completeTodo, removeTodo}: TodoListProps) {
 
   return (
     <section>
@@ -26,7 +25,7 @@ function TodoList({todoList, completeTodo, removeTodo, selectTodo}: TodoListProp
                     <input
                       type="checkbox"
                       checked={item.isComplete ? true : false}
-                      onChange={() => completeTodo(item.id)}
+                      onChange={() => completeTodo(item)}
                     />
                     <i className="todo__item-check-icon" />
                     <GoCheck className="todo__item-check-icon complete" />
@@ -37,7 +36,6 @@ function TodoList({todoList, completeTodo, removeTodo, selectTodo}: TodoListProp
                     <Link
                       className="todo__item-button"
                       to={`/update/${item.id}`}
-                      onClick={() => selectTodo(item)}
                       >
                       <TiEdit
                         className="todo__item-button-icon update"
@@ -60,10 +58,6 @@ function TodoList({todoList, completeTodo, removeTodo, selectTodo}: TodoListProp
       </ul>
     </section>
   )
-}
-
-TodoList.defaultProps = {
-  selectTodo: () => {}
 }
 
 export default TodoList

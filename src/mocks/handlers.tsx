@@ -1,5 +1,6 @@
 // src/mocks/handlers.js
 import { rest } from 'msw'
+import { TodoListType } from '../type/type'
 
 type SampleDataType = {
   id: number,
@@ -59,24 +60,41 @@ export const handlers = [
 
   // todo!!
   rest.get('/api/todos', (req, res, ctx) => {
-    let item:string | null = localStorage.getItem(KEY)
-    console.log('fucking crazy : ',item)
-    if(item && typeof item === 'string') item = JSON.parse(item)
+    let list:string | null = localStorage.getItem(KEY)
+    if(list && typeof list === 'string') list = JSON.parse(list)
     return res(
       ctx.status(200),
-      ctx.json(item)
+      ctx.json(list)
     )
+  }),
+
+  rest.get('/api/todos/:itemId', (req, res, ctx) => {
+    const itemId = Number(req.params.itemId)
+    const store:string | null = localStorage.getItem(KEY)
+    if(store) {
+      const data: TodoListType[] = JSON.parse(store)
+      const itemData = data.filter(item => item.id === itemId)
+
+      return res(
+        ctx.status(200),
+        ctx.json(itemData[0])
+      )
+    } else {
+      return res(
+        ctx.status(404)
+      )
+    }
   }),
 
   rest.post('/api/todos', (req, res, ctx) => {
     if (typeof req.body === 'string') {
-      const store: string | null = localStorage.getItem('TODO_LIST');
+      const store: string | null = localStorage.getItem(KEY)
       if (store === null) {
-        const data = JSON.stringify([JSON.parse(req.body)]);
-        localStorage.setItem('TODO_LIST', data);
+        const data = JSON.stringify([JSON.parse(req.body)])
+        localStorage.setItem(KEY, data)
       } else {
         const data = JSON.stringify([ ...JSON.parse(store), JSON.parse(req.body) ]);
-        localStorage.setItem('TODO_LIST', data)
+        localStorage.setItem(KEY, data)
       }
     }
 
@@ -88,4 +106,54 @@ export const handlers = [
     )
   }),
 
+  rest.put('/api/todos/:itemId', (req, res, ctx) => {
+    const itemId = Number(req.params.itemId)
+    if(req.body && typeof req.body === 'string') {
+      const data = JSON.parse(req.body)
+      const {id, title, description, isComplete} = data
+      const store: string | null = localStorage.getItem(KEY)
+      if (store) {
+        const data: TodoListType[] = [...JSON.parse(store)]
+        const updateData = data.map(item => {
+          if (item.id === itemId) {
+            return {
+              ...item,
+              id,
+              title,
+              description,
+              isComplete
+            }
+          }
+          return ({...item})
+        })
+
+        localStorage.setItem(KEY, JSON.stringify(updateData))
+
+        return res(
+          ctx.status(200),
+          ctx.json(updateData)
+        )
+      }
+    } else {
+      return res(
+        ctx.status(404)
+      )
+    }
+  }),
+
+  rest.delete('/api/todos/:itemId', (req, res, ctx) => {
+    const itemId = Number(req.params.itemId)
+    const store:string | null = localStorage.getItem(KEY)
+    if(store && typeof store === 'string') {
+      const data: TodoListType[] = JSON.parse(store)
+      console.log('itemId', typeof itemId)
+      const removeData = data.filter(item => item.id !== itemId)
+      localStorage.setItem(KEY, JSON.stringify(removeData))
+
+      return res(
+        ctx.status(200),
+        ctx.json(removeData)
+      )
+    }
+  }),
 ]
