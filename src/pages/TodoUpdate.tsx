@@ -2,18 +2,18 @@ import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import TodoForm from '../components/TodoForm'
 import { useTodoState, useTodoDispatch, getTodoItem, putTodo } from '../context/TodoContext'
-import { TodoListType } from '../type/type'
+import { TodoDataType } from '../type/type'
 import Loader from 'react-loader-spinner'
 import NotFound from '../components/NotFound'
 
 function TodoUpdate() {
   const state = useTodoState()
   const dispatch = useTodoDispatch()
-  const { isLoading, data: todoItem, error} = state.item
+  const { isLoading, data: todoItem, error} = state
   const { itemId } = useParams<{ itemId: string }>()
 
-  const updateTodo = (updateItem: TodoListType) => {
-    putTodo(dispatch, updateItem)
+  const updateTodo = (updateItem: TodoDataType) => {
+    // putTodo(dispatch, updateItem)
   }
 
   useEffect(() => {
@@ -38,7 +38,7 @@ function TodoUpdate() {
           />
         </div> : null
       }
-      { todoItem && <TodoForm selectedItem={todoItem} updateTodo={updateTodo} /> }
+      { todoItem && <TodoForm updateTodo={updateTodo} /> }
     </>
   )
 }

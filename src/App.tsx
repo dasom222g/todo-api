@@ -8,7 +8,7 @@ import './assets/style/todo.scss'
 // import UsersSample from './practice/UsersSample';
 import {Switch, Route} from 'react-router-dom'
 import TodoHome from './pages/TodoHome';
-import TodoUpdate from './pages/TodoUpdate';
+// import TodoUpdate from './pages/TodoUpdate';
 import { TodoProvider } from './context/TodoContext';
 
 function App() {
@@ -31,12 +31,12 @@ function App() {
               }
               exact
             />
-            <Route
+            {/* <Route
               path="/update/:itemId"
               render={() =>
                 <TodoUpdate />
               }
-            />
+            /> */}
             <Route path="/">Not found</Route>
           </Switch>
         </TodoProvider>

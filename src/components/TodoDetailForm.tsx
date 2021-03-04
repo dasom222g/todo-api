@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import useInputs from '../hook/useInputs'
-import { FormType, TodoListType } from '../type/type'
+import { FormType, TodoDataType } from '../type/type'
 
 type TodoDetailFormProps = {
-  selectedItem: TodoListType
+  selectedItem: TodoDataType
   updateNote: (value: FormType) => void
 }
 

@@ -1,6 +1,6 @@
 // src/mocks/handlers.js
 import { rest } from 'msw'
-import { TodoListType } from '../type/type'
+import { TodoDataIDType } from '../type/type'
 
 type SampleDataType = {
   id: number,
@@ -72,7 +72,7 @@ export const handlers = [
     const itemId = Number(req.params.itemId)
     const store:string | null = localStorage.getItem(KEY)
     if(store) {
-      const data: TodoListType[] = JSON.parse(store)
+      const data: TodoDataIDType[] = JSON.parse(store)
       const itemData = data.filter(item => item.id === itemId)
 
       return res(
@@ -88,23 +88,22 @@ export const handlers = [
 
   rest.post('/api/todos', (req, res, ctx) => {
     if (typeof req.body === 'string') {
-      const id = Math.floor(Math.random()*99999);
-      const newTodo = {id, ...JSON.parse(req.body)}
       const store: string | null = localStorage.getItem(KEY)
       if (store === null) {
-        const data = JSON.stringify([newTodo])
+        const data = JSON.stringify([JSON.parse(req.body)])
         localStorage.setItem(KEY, data)
       } else {
-        const data = JSON.stringify([ ...JSON.parse(store), newTodo ]);
+        const data = JSON.stringify([ ...JSON.parse(store), JSON.parse(req.body) ]);
         localStorage.setItem(KEY, data)
       }
-      return res(
-        ctx.json(newTodo),
-        ctx.status(200)
-      )
     }
 
-   return res(ctx.status(422))
+    return res(
+      ctx.json({
+        [KEY]: req.body
+      }),
+      ctx.status(200)
+    )
   }),
 
   rest.put('/api/todos/:itemId', (req, res, ctx) => {
@@ -114,7 +113,7 @@ export const handlers = [
       const {id, title, description, isComplete} = data
       const store: string | null = localStorage.getItem(KEY)
       if (store) {
-        const data: TodoListType[] = [...JSON.parse(store)]
+        const data: TodoDataIDType[] = [...JSON.parse(store)]
         const updateData = data.map(item => {
           if (item.id === itemId) {
             return {
@@ -146,7 +145,7 @@ export const handlers = [
     const itemId = Number(req.params.itemId)
     const store:string | null = localStorage.getItem(KEY)
     if(store && typeof store === 'string') {
-      const data: TodoListType[] = JSON.parse(store)
+      const data: TodoDataIDType[] = JSON.parse(store)
       console.log('itemId', typeof itemId)
       const removeData = data.filter(item => item.id !== itemId)
       localStorage.setItem(KEY, JSON.stringify(removeData))

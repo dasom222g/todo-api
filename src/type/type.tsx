@@ -16,30 +16,52 @@ export type FormType = {
   description: string
 }
 
-export type TodoListType = {
+
+export type NormalDataType<T> = {
+  todos: {
+    byId: T,
+    allIds: string[]
+  }
+}
+
+export type TodoDataType = {
+  title: string,
+  description: string,
+  isComplete: boolean
+}
+
+export type TodoDataIDType = {
   id: number,
   title: string,
   description: string,
   isComplete: boolean
 }
 
-type ListStateType = {
+export type AsyncTodoType = {
   isLoading: boolean,
-  data: TodoListType[] | null,
-  error: object | null
-}
-type ItemStateType = {
-  isLoading: boolean,
-  data: TodoListType | null,
+  data: NormalDataType<{}> | null,
   error: object | null
 }
 
-export type AsyncTodoType = {
-  list: ListStateType,
-  item: ItemStateType
-}
+export let byIdType: { [x: string]: TodoDataIDType }
 
 export const formInitialState = {
   title: '',
   description: ''
 }
+
+
+
+// const initialData = {
+//   todos: {
+//     byId: {
+//       '0': {
+//         id: '0',
+//         title: '',
+//         description: '',
+//         isComplete: false
+//       }
+//     },
+//     allIds: ['0']
+//   }
+// }

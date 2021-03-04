@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import useReactRouter from 'use-react-router'
 import useInputs from '../hook/useInputs'
-import { formInitialState, FormType, TodoListType } from '../type/type'
+import { formInitialState, FormType, TodoDataType } from '../type/type'
 import TodoDetailForm from './TodoDetailForm'
 
 type TodoFormProps = {
-  selectedItem: TodoListType
+  selectedItem: TodoDataType
   addTodo: (value: FormType) => void
-  updateTodo: (value: TodoListType) =>  void
+  updateTodo: (value: TodoDataType) =>  void
 }
 
 function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
