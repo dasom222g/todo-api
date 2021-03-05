@@ -16,10 +16,13 @@ export type FormType = {
   description: string
 }
 
+export type byIdType = {
+  [key: string]: TodoDataIDType
+}
 
-export type NormalDataType<T> = {
+export type NormalDataType = {
   todos: {
-    byId: T,
+    byId: byIdType,
     allIds: string[]
   }
 }
@@ -39,11 +42,13 @@ export type TodoDataIDType = {
 
 export type AsyncTodoType = {
   isLoading: boolean,
-  data: NormalDataType<{}> | null,
-  error: object | null
+  data: NormalDataType,
+  selectedItem: TodoDataIDType | null
+  error: object | null,
 }
 
-export let byIdType: { [x: string]: TodoDataIDType }
+// export let byIdType: { [key: string]: TodoDataIDType }
+
 
 export const formInitialState = {
   title: '',

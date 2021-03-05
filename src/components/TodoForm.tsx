@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import useReactRouter from 'use-react-router'
 import useInputs from '../hook/useInputs'
-import { formInitialState, FormType, TodoDataType } from '../type/type'
+import { formInitialState, FormType, TodoDataIDType } from '../type/type'
 import TodoDetailForm from './TodoDetailForm'
 
 type TodoFormProps = {
-  selectedItem: TodoDataType
+  selectedItem: TodoDataIDType
   addTodo: (value: FormType) => void
-  updateTodo: (value: TodoDataType) =>  void
+  updateTodo: (value: TodoDataIDType) =>  void
 }
 
 function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
@@ -42,6 +42,10 @@ function TodoForm({selectedItem, addTodo, updateTodo}: TodoFormProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault()
+    if (/^\s*$/.test(title)) {
+      reset()
+      return
+    }
     if (!selectedItem) {
       addTodo(form)
       reset()

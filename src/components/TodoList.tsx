@@ -3,14 +3,15 @@ import { Link } from 'react-router-dom';
 import {GoCheck} from 'react-icons/go'
 import {RiCloseCircleLine} from 'react-icons/ri'
 import {TiEdit} from 'react-icons/ti'
-import { byIdType, NormalDataType } from '../type/type'
+import { NormalDataType } from '../type/type'
 
 type TodoListProps = {
-  todoList: NormalDataType<{}>,
+  todoList: NormalDataType,
+  completeTodo: (id: string) => void,
+  removeTodo: (id: string) => void
 }
-function TodoList({todoList}: TodoListProps) {
-  const {allIds} = todoList.todos
-  const byId: typeof byIdType = todoList.todos.byId
+function TodoList({todoList, completeTodo, removeTodo}: TodoListProps) {
+  const {byId, allIds} = todoList.todos
 
   return (
     <section>
@@ -18,13 +19,13 @@ function TodoList({todoList}: TodoListProps) {
         {allIds.map(id => {
           return (
             <li key={id} className="todo__item">
-              <div className='todo__content complete'>
+              <div className={byId[id].isComplete ? 'todo__content complete' : 'todo__content'}>
                 <div className="todo__item-check">
                   <label>
                     <input
                       type="checkbox"
-                      // checked={item.isComplete ? true : false}
-                      // onChange={() => completeTodo(item)}
+                      checked={byId[id].isComplete ? true : false}
+                      onChange={() => completeTodo(id)}
                     />
                     <i className="todo__item-check-icon" />
                     <GoCheck className="todo__item-check-icon complete" />
@@ -43,7 +44,7 @@ function TodoList({todoList}: TodoListProps) {
                     <button
                       type="button"
                       className="todo__item-button"
-                      // onClick={() => removeTodo(item.id)}
+                      onClick={() => removeTodo(id)}
                     >
                       <RiCloseCircleLine
                         className="todo__item-button-icon delete"

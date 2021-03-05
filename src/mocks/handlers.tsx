@@ -60,11 +60,15 @@ export const handlers = [
 
   // todo!!
   rest.get('/api/todos', (req, res, ctx) => {
-    let list:string | null = localStorage.getItem(KEY)
-    if(list && typeof list === 'string') list = JSON.parse(list)
+    const store:string | null = localStorage.getItem(KEY)
+    if(typeof store === 'string') {
+      return res(
+        ctx.status(200),
+        ctx.json(store && JSON.parse(store))
+      )
+    }
     return res(
-      ctx.status(200),
-      ctx.json(list)
+      ctx.status(400)
     )
   }),
 
@@ -88,52 +92,50 @@ export const handlers = [
 
   rest.post('/api/todos', (req, res, ctx) => {
     if (typeof req.body === 'string') {
+      const id = Math.floor(Math.random()*99999);
+      const newTodo = {id, ...JSON.parse(req.body)}
       const store: string | null = localStorage.getItem(KEY)
       if (store === null) {
-        const data = JSON.stringify([JSON.parse(req.body)])
+        const data = JSON.stringify([newTodo])
         localStorage.setItem(KEY, data)
       } else {
-        const data = JSON.stringify([ ...JSON.parse(store), JSON.parse(req.body) ]);
+        // const data = JSON.stringify([ ...JSON.parse(store), newTodo ]);
+        const data = JSON.stringify([...JSON.parse(store), newTodo])
         localStorage.setItem(KEY, data)
       }
+      return res(
+        ctx.json(newTodo),
+        ctx.status(200)
+      )
     }
-
-    return res(
-      ctx.json({
-        [KEY]: req.body
-      }),
-      ctx.status(200)
-    )
+    return res(ctx.status(422))
   }),
+
 
   rest.put('/api/todos/:itemId', (req, res, ctx) => {
     const itemId = Number(req.params.itemId)
     if(req.body && typeof req.body === 'string') {
-      const data = JSON.parse(req.body)
-      const {id, title, description, isComplete} = data
+      const {id, title, description, isComplete} = JSON.parse(req.body)
       const store: string | null = localStorage.getItem(KEY)
-      if (store) {
-        const data: TodoDataIDType[] = [...JSON.parse(store)]
-        const updateData = data.map(item => {
-          if (item.id === itemId) {
-            return {
-              ...item,
-              id,
-              title,
-              description,
-              isComplete
-            }
+      const storeData: TodoDataIDType[] = store && JSON.parse(store)
+      const updateData = storeData.map(item => {
+        if (item.id === itemId) {
+          return {
+            ...item,
+            id,
+            title,
+            description,
+            isComplete
           }
-          return ({...item})
-        })
+        }
+        return {...item}
+      })
+      localStorage.setItem(KEY, JSON.stringify(updateData))
 
-        localStorage.setItem(KEY, JSON.stringify(updateData))
-
-        return res(
-          ctx.status(200),
-          ctx.json(updateData)
-        )
-      }
+      return res(
+        ctx.status(200),
+        ctx.json(JSON.parse(req.body))
+      )
     } else {
       return res(
         ctx.status(404)

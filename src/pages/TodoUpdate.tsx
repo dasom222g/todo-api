@@ -1,23 +1,23 @@
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import TodoForm from '../components/TodoForm'
-import { useTodoState, useTodoDispatch, getTodoItem, putTodo } from '../context/TodoContext'
-import { TodoDataType } from '../type/type'
+import { useTodoState, useTodoDispatch, getTodo, putTodo } from '../context/TodoContext'
+import { TodoDataIDType } from '../type/type'
 import Loader from 'react-loader-spinner'
 import NotFound from '../components/NotFound'
 
 function TodoUpdate() {
   const state = useTodoState()
   const dispatch = useTodoDispatch()
-  const { isLoading, data: todoItem, error} = state
+  const { isLoading, selectedItem: todoItem, error} = state
   const { itemId } = useParams<{ itemId: string }>()
 
-  const updateTodo = (updateItem: TodoDataType) => {
-    // putTodo(dispatch, updateItem)
+  const updateTodo = (updateItem: TodoDataIDType) => {
+    putTodo(dispatch, updateItem)
   }
 
   useEffect(() => {
-    getTodoItem(dispatch, Number(itemId))
+    getTodo(dispatch, itemId)
   }, [dispatch, itemId])
 
   if (error) return <NotFound />
@@ -27,18 +27,14 @@ function TodoUpdate() {
       <header>
         <h2 className="todo__title">What’s the Plan for Today?</h2>
       </header>
-      { isLoading ?
-        <div className="loading">
-          <Loader
-            height={100}
-            timeout={3000}
-            type="Circles"
-            visible={true}
-            width={80}
-          />
-        </div> : null
+      { isLoading &&
+        (
+          <div className="loading">
+            <Loader height={100} timeout={3000} type="Circles" visible={true} width={80} />
+          </div>
+        )
       }
-      { todoItem && <TodoForm updateTodo={updateTodo} /> }
+      { todoItem && <TodoForm selectedItem={todoItem} updateTodo={updateTodo} /> }
     </>
   )
 }
