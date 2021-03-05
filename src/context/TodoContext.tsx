@@ -1,188 +1,100 @@
 import React, { createContext, Dispatch, useContext, useReducer } from 'react'
-import produce from 'immer'
-import { TodoDataType, TodoDataIDType, NormalDataType, AsyncTodoType, byIdType } from '../type/type'
+import {AsyncTodoType, TodoListType} from '../type/type'
 import { header, sleep } from '../variable/variable'
 
-// const todosInitialState = (id: string):NormalDataType => ({
-//   todos: {
-//     byId: {
-//       [id]: {
-//         id: 0,
-//         title: '',
-//         description: '',
-//         isComplete: false
-//       }
-//     },
-//     allIds: []
-//   }
-// })
-
-const todosInitialState:NormalDataType = {
-  todos: {
-    byId: {},
-    allIds: []
+const initialState = {
+  list: {
+    isLoading: false,
+    data: null,
+    error: null
+  },
+  item: {
+    isLoading: false,
+    data: null,
+    error: null
   }
 }
 
-const initialState = {
-  isLoading: false,
-  data: todosInitialState,
-  selectedItem: null,
+const loadingState = {
+  isLoading: true,
+  data: null,
   error: null
 }
 
-// const addDataFirst = (newItem: TodoDataIDType) => {
-//   const id = newItem.id.toString()
-//   return produce(todosInitialState, draft => {
-//     const { allIds, byId } = draft.todos
-//     allIds.push(id)
-//     byId[id] = newItem
-//   })
-// }
+const successState = (data: any) => ({
+  isLoading: false,
+  data,
+  error: null
+})
 
-const addItem = (data:NormalDataType, newItem: TodoDataIDType) => {
-  const id = newItem.id.toString()
-  return produce(data, draft => {
-    const { allIds, byId } = draft.todos
-    allIds.push(id)
-    byId[id] = newItem
-  })
-}
-
-const getList = (data: TodoDataIDType[]): NormalDataType => {
-  const allIds = data.map(item => item.id.toString())
-  const byId: byIdType = {}
-  data.forEach(item => {
-    byId[item.id.toString()] = item
-  })
-  const todosData: NormalDataType = {
-    todos: {
-      byId,
-      allIds
-    }
-  }
-  return todosData
-}
-
-const removeData = (data: NormalDataType, id: string) => {
-  const allIds = data.todos.allIds.filter(itemId => itemId !== id)
-  const byId = produce(data.todos.byId, draft => {
-    delete draft[id]
-  })
-
-  const todosData: NormalDataType = {
-    todos: {
-      byId,
-      allIds
-    }
-  }
-  return todosData
-}
+const errorState = (error: object) => ({
+  isLoading: false,
+  data: null,
+  error: error
+})
 
 export type ActionType =
-  | { type: 'ADD_TODO', payload: TodoDataIDType}
-  | { type: 'ADD_TODO_ERROR', error: object}
-  | { type: 'UPDATE_TODO', payload: TodoDataIDType}
-  | { type: 'UPDATE_TODO_ERROR', error: object}
-  | { type: 'DELETE_TODO', id: string}
-  | { type: 'DELETE_TODO_ERROR', error: object}
-  | { type: 'FETCH_TODOS' }
-  | { type: 'FETCH_TODOS_SUCCESS', payload: TodoDataIDType[] }
-  | { type: 'FETCH_TODOS_ERROR', error: object }
-  | { type: 'FETCH_TODO' }
-  | { type: 'FETCH_TODO_SUCCESS', payload: TodoDataIDType }
-  | { type: 'FETCH_TODO_ERROR', error: object }
+  | { type: 'ADD_TODO', payload: TodoListType}
+  | { type: 'GET_LIST_LOADING' }
+  | { type: 'GET_LIST_SUCCESS', data: TodoListType[] }
+  | { type: 'GET_LIST_ERROR', error: object }
+  | { type: 'GET_ITEM_LOADING' }
+  | { type: 'GET_ITEM_SUCCESS', data: TodoListType }
+  | { type: 'GET_ITEM_ERROR', error: object }
+  
+  // | { type: 'POST_ITEM_SUCCESS', data: TodoListType }
+  // | { type: 'POST_ITEM_ERROR', error: object }
+  // | { type: 'PUT_ITEM_SUCCESS', data: TodoListType }
+  // | { type: 'PUT_ITEM_ERROR', error: object }
+  // | { type: 'DELETE_ITEM_SUCCESS', data: TodoListType }
+  // | { type: 'DELETE_ITEM_ERROR', error: object }
 
 const reducer = (state: AsyncTodoType, action: ActionType): AsyncTodoType => {
   switch (action.type) {
     case 'ADD_TODO':
-      return produce(state, draft => {
-        draft.isLoading = false
-        draft.selectedItem = null
-        draft.error = null
-        // state.data는 initial값으로 세팅하므로 null일경우 없음
-        draft.data = addItem(state.data, action.payload)
-      })
-    case 'ADD_TODO_ERROR':
-      return produce(state, draft => {
-        draft.isLoading = false
-        draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = action.error
-      })
-    case 'UPDATE_TODO':
-      const id = action.payload.id
-      return produce(state, draft => {
-        draft.isLoading = false
-        draft.data.todos.byId[id] = action.payload
-        draft.selectedItem = null
-        draft.error = null
-      })
-    case 'UPDATE_TODO_ERROR':
-      return produce(state, draft => {
-        draft.isLoading = false
-        draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = action.error
-      })
-    case 'DELETE_TODO':
-      return produce(state, draft => {
-        draft.isLoading = false
-        draft.data = removeData(state.data, action.id)
-        draft.selectedItem = null
-        draft.error = null
-      })
-    case 'DELETE_TODO_ERROR':
-      return produce(state, draft => {
-        draft.isLoading = false
-        draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = action.error
-      })
-    case 'FETCH_TODOS':
-      return produce(state, draft => {
-        draft.isLoading = true
-        draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = null
-      })
-    case 'FETCH_TODOS_SUCCESS':
-      return produce(state, draft => {
-        draft.isLoading = false
-        action.payload ? draft.data = getList(action.payload) : draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = null
-      })
-    case 'FETCH_TODOS_ERROR':
-      return produce(state, draft => {
-        draft.isLoading = false
-        draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = action.error
-      })
-    case 'FETCH_TODO':
-      return produce(state, draft => {
-        draft.isLoading = true
-        draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = null
-      })
-    case 'FETCH_TODO_SUCCESS':
-      return produce(state, draft => {
-        draft.isLoading = false
-        draft.data = todosInitialState
-        draft.selectedItem = action.payload
-        draft.error = null
-      })
-    case 'FETCH_TODO_ERROR':
-      return produce(state, draft => {
-        draft.isLoading = false
-        draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = action.error
-      })
+      return {
+        ...state,
+        list: {
+          isLoading: false,
+          error: null,
+          data: state.list.data && [...state.list.data, action.payload]
+        }
+      }
+    case 'GET_LIST_LOADING':
+      return {
+        ...state,
+          list: {
+            ...state.list,
+            isLoading: true,
+          }
+        }
+    case 'GET_LIST_SUCCESS':
+      return {
+        ...state,
+        list: successState(action.data)
+      }
+    case 'GET_LIST_ERROR':
+      return {
+        ...state,
+        list: errorState(action.error)
+      }
+    case 'GET_ITEM_LOADING':
+      return {
+        ...state,
+        item: loadingState
+      }
+    case 'GET_ITEM_SUCCESS':
+      return {
+        ...state,
+        item: successState(action.data)
+      }
+    case 'GET_ITEM_ERROR':
+      return {
+        ...state,
+        item: errorState(action.error)
+      }
     default:
-      return state
+      throw new Error(`unHandled action ${action}`)
   }
 }
 
@@ -218,62 +130,70 @@ export function useTodoDispatch () {
 
 // api function
 
-export async function getTodos (dispatch: Dispatch<ActionType>) {
+export async function getTodoList (dispatch: Dispatch<ActionType>) {
+  dispatch({ type: 'GET_LIST_LOADING' })
+  await sleep(500)
   try {
     const response = await fetch('/api/todos', header)
     let responseData = await response.json()
-    dispatch({type: 'FETCH_TODOS_SUCCESS', payload: responseData})
+    dispatch({type: 'GET_LIST_SUCCESS', data: responseData})
   } catch (e) {
-    dispatch({type: 'FETCH_TODOS_ERROR', error: e})
+    dispatch({type: 'GET_LIST_ERROR', error: e})
   }
 }
 
-export async function getTodo (dispatch: Dispatch<ActionType>, id: string) {
-  dispatch({ type: 'FETCH_TODO' })
-  await sleep(200)
+export async function getTodoItem (dispatch: Dispatch<ActionType>, id: number) {
+  dispatch({ type: 'GET_ITEM_LOADING' })
+  await sleep(500)
   try {
     const response = await fetch(`/api/todos/${id}`, header)
-    let responseData: TodoDataIDType = await response.json()
-    dispatch({type: 'FETCH_TODO_SUCCESS', payload: responseData})
+    let responseData = await response.json()
+    dispatch({type: 'GET_ITEM_SUCCESS', data: responseData})
   } catch (e) {
-    dispatch({type: 'FETCH_TODO_ERROR', error: e})
+    dispatch({type: 'GET_ITEM_ERROR', error: e})
   }
 }
 
-export async function postTodo (dispatch: Dispatch<ActionType>, newItem: TodoDataType) {
+export async function postTodo (dispatch: Dispatch<ActionType>, newItem: {title: string; description: string}) {
+  dispatch({ type: 'GET_LIST_LOADING' })
+  await sleep(500)
   try {
     const response = await fetch('/api/todos', {
       method: 'POST',
       body: JSON.stringify(newItem),
     })
-    const responseData = await response.json()
+    let responseData = await response.json()
     dispatch({type: 'ADD_TODO', payload: responseData})
+    
   } catch (e) {
-    dispatch({type: 'ADD_TODO_ERROR', error: e})
+    dispatch({type: 'GET_LIST_ERROR', error: e})
   }
 }
 
-export async function putTodo (dispatch: Dispatch<ActionType>, item: TodoDataIDType) {
+export async function putTodo (dispatch: Dispatch<ActionType>, item: TodoListType) {
   try {
-    const response = await fetch(`/api/todos/${item.id}`, {
+    await fetch(`/api/todos/${item.id}`, {
       method: 'PUT',
       body : JSON.stringify(item),
     })
-    const responseData = await response.json()
-    dispatch({type: 'UPDATE_TODO', payload: responseData})
+    const response = await fetch('/api/todos', header)
+    let responseData = await response.json()
+    dispatch({type: 'GET_LIST_SUCCESS', data: responseData})
   } catch(e) {
-    dispatch({type: 'UPDATE_TODO_ERROR', error: e})
+    dispatch({type: 'GET_LIST_ERROR', error: e})
   }
 }
 
-export async function deleteTodo(dispatch: Dispatch<ActionType>, id: string) {
+export async function deleteTodo(dispatch: Dispatch<ActionType>, id: number) {
   try {
     await fetch(`/api/todos/${id}`, {
       method: 'DELETE',
     })
-    dispatch({type: 'DELETE_TODO', id})
+    const response = await fetch('/api/todos', header)
+    let responseData = await response.json()
+    dispatch({type: 'GET_LIST_SUCCESS', data: responseData})
   } catch (e) {
-    dispatch({type: 'DELETE_TODO_ERROR', error: e})
+    dispatch({type: 'GET_LIST_ERROR', error: e})
   }
 }
 

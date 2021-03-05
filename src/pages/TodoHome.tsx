@@ -1,45 +1,45 @@
 import React, {useEffect} from 'react'
 import TodoForm from '../components/TodoForm'
 import TodoList from '../components/TodoList'
-import { deleteTodo, getTodos, postTodo, putTodo, useTodoDispatch, useTodoState } from '../context/TodoContext'
-import { FormType, TodoDataType } from '../type/type'
+import { deleteTodo, getTodoList, postTodo, putTodo, useTodoDispatch, useTodoState } from '../context/TodoContext'
+import { FormType, TodoListType } from '../type/type'
 import NotFound from '../components/NotFound'
 
 function TodoHome() {
   const state = useTodoState()
   const dispatch = useTodoDispatch()
-  const {data: todoList, error} = state
+  const { data: todoList, error} = state.list
 
   const addTodo = (value: FormType):void => {
     // Todo: TodoForm에서 이미 validation 을 한상태로 value를 보내주기
-    const {allIds, byId} = todoList.todos
-    const byIdArr = allIds.map(id => byId[id])
-    const sameArr = byIdArr.filter(item => item.title === value.title)
-    if (!sameArr.length) {
-      const newTodoItem: TodoDataType = {
+    if (!value.title || /^\s*$/.test(value.title)) return
+    const _todoList = todoList && [...todoList]
+    const sameTodo = _todoList?.filter(item=> item.title === value.title)
+    if (!sameTodo?.length) {
+      const newTodoItem = {
         title: value.title,
         description: value.description,
-        isComplete: false
       }
       postTodo(dispatch, newTodoItem)
+    } else {
+      console.log('같은 값이 있습니다')
     }
   }
 
-  const completeTodo = (id: string): void => {
-    const changeItem = {
-      ...todoList.todos.byId[id],
-      isComplete: !todoList.todos.byId[id].isComplete
+  const completeTodo = (item: TodoListType): void => {
+    const completeItem = {
+      ...item,
+      isComplete: !item.isComplete
     }
-    putTodo(dispatch, changeItem)
+    putTodo(dispatch, completeItem)
   }
 
-  const removeTodo = (id: string): void => {
-    // const removeItem = todoList.todos.byId[id]
-    deleteTodo(dispatch, id)
+  const removeTodo = (id: number): void => {
+    deleteTodo(dispatch,id)
   }
 
   useEffect(() => {
-    getTodos(dispatch)
+    getTodoList(dispatch)
   }, [dispatch])
 
   if (error) return <NotFound />
@@ -49,14 +49,8 @@ function TodoHome() {
         <h2 className="todo__title">What’s the Plan for Today?</h2>
       </header>
       <TodoForm addTodo = {addTodo} />
-      {/* { isLoading &&
-        (
-          <div className="loading">
-            <Loader height={100} type="Circles" visible={true} width={80} />
-          </div>
-        )
-      } */}
-      { todoList ? <TodoList todoList={todoList} completeTodo={completeTodo} removeTodo={removeTodo} /> : <></> }
+      
+      { todoList ? <TodoList todoList={todoList} completeTodo={completeTodo} removeTodo={removeTodo} /> : null }
     </>
   )
 }
