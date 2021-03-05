@@ -3,39 +3,39 @@ import { Link } from 'react-router-dom';
 import {GoCheck} from 'react-icons/go'
 import {RiCloseCircleLine} from 'react-icons/ri'
 import {TiEdit} from 'react-icons/ti'
-import { TodoListType } from '../type/type'
+import { NormalDataType } from '../type/type'
 
 type TodoListProps = {
-  todoList: TodoListType[],
-  completeTodo: (item: TodoListType) => void,
-  removeTodo: (id: number) => void,
+  todoList: NormalDataType,
+  completeTodo: (id: string) => void,
+  removeTodo: (id: string) => void
 }
-
 function TodoList({todoList, completeTodo, removeTodo}: TodoListProps) {
+  const {byId, allIds} = todoList.todos
 
   return (
     <section>
       <ul className="todo__list">
-        {todoList.map(item => {
+        {allIds.map(id => {
           return (
-            <li key={item.id} className="todo__item">
-              <div className={item.isComplete ? 'todo__content complete' : 'todo__content'}>
+            <li key={id} className="todo__item">
+              <div className={byId[id].isComplete ? 'todo__content complete' : 'todo__content'}>
                 <div className="todo__item-check">
                   <label>
                     <input
                       type="checkbox"
-                      checked={item.isComplete ? true : false}
-                      onChange={() => completeTodo(item)}
+                      checked={byId[id].isComplete ? true : false}
+                      onChange={() => completeTodo(id)}
                     />
                     <i className="todo__item-check-icon" />
                     <GoCheck className="todo__item-check-icon complete" />
-                    <span className="todo__content-text">{item.title}</span>
+                    <span className="todo__content-text">{byId[id].title}</span>
                   </label>
                 </div>
                 <div className="todo__item-buttonarea">
                     <Link
                       className="todo__item-button"
-                      to={`/update/${item.id}`}
+                      to={`/update/${id}`}
                       >
                       <TiEdit
                         className="todo__item-button-icon update"
@@ -44,7 +44,7 @@ function TodoList({todoList, completeTodo, removeTodo}: TodoListProps) {
                     <button
                       type="button"
                       className="todo__item-button"
-                      onClick={() => removeTodo(item.id)}
+                      onClick={() => removeTodo(id)}
                     >
                       <RiCloseCircleLine
                         className="todo__item-button-icon delete"
