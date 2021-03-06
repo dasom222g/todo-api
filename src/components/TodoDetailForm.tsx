@@ -17,7 +17,8 @@ function TodoDetailForm({selectedItem, updateNote}: TodoDetailFormProps) {
 
   useEffect(() => {
     updateNote(description)
-  }, [updateNote, description])
+    //eslint-disable-next-line
+  }, [description])
 
   return (
     <div className="todo__detail-desc">

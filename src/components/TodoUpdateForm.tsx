@@ -48,7 +48,11 @@ function TodoUpdateForm({selectedItem, updateTodo}: TodoUpdateFormProps) {
       return
     }
     if (window.confirm('Are you sure you wish to update this item?')) {
-      updateTodo({...selectedItem, title, description})
+      updateTodo({
+        ...selectedItem,
+        title: title.trim(),
+        description: description.trim()
+      })
       goHome()
       reset()
     }
