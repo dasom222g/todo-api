@@ -28,6 +28,10 @@ function TodoUpdateForm({selectedItem, updateTodo}: TodoUpdateFormProps) {
 
   const updateNote = (description: string) => {
     console.log('description', description)
+    if (/^\s*$/.test(title)) {
+      reset()
+      return
+    }
     setDescription(description)
   }
 
