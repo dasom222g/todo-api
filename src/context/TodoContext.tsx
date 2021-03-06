@@ -116,13 +116,6 @@ const reducer = (state: AsyncTodoType, action: ActionType): AsyncTodoType => {
         draft.selectedItem = null
         draft.error = action.error
       })
-    case 'FETCH_TODOS':
-      return produce(state, draft => {
-        draft.isLoading = true
-        draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = null
-      })
     case 'FETCH_TODOS_SUCCESS':
       return produce(state, draft => {
         draft.isLoading = false
