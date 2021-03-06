@@ -2,7 +2,7 @@ import React, {useEffect} from 'react'
 import TodoForm from '../components/TodoForm'
 import TodoList from '../components/TodoList'
 import { deleteTodo, getTodos, postTodo, putTodo, useTodoDispatch, useTodoState } from '../context/TodoContext'
-import { FormType, TodoDataType } from '../type/type'
+import { TodoDataType } from '../type/type'
 import NotFound from '../components/NotFound'
 
 function TodoHome() {
@@ -10,15 +10,14 @@ function TodoHome() {
   const dispatch = useTodoDispatch()
   const {data: todoList, error} = state
 
-  const addTodo = (value: FormType):void => {
-    // Todo: TodoForm에서 이미 validation 을 한상태로 value를 보내주기
+  const addTodo = (title: string):void => {
     const {allIds, byId} = todoList.items
     const byIdArr = allIds.map(id => byId[id])
-    const sameArr = byIdArr.filter(item => item.title === value.title)
+    const sameArr = byIdArr.filter(item => item.title === title)
     if (!sameArr.length) {
       const newTodoItem: TodoDataType = {
-        title: value.title,
-        description: value.description,
+        title,
+        description: '',
         isComplete: false
       }
       postTodo(dispatch, newTodoItem)

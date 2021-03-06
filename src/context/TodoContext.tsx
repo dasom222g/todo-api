@@ -155,14 +155,17 @@ const reducer = (state: AsyncTodoType, action: ActionType): AsyncTodoType => {
   }
 }
 
+// context를 state와 dispatch로 나누어 생성
 const TodoStateContext = createContext<AsyncTodoType | null>(null)
 const TodoDispatchContext = createContext<Dispatch<ActionType> | null>(null)
 
+// context(state, dispatch)를 감싸져있는 children에서 참조할 수있도록 구조 정의
 type TodoProviderProps = {
   children: React.ReactNode
 }
 
 export function TodoProvider({children}: TodoProviderProps) {
+  // 상태 참조및 변경해주는 reducer 해당 레벨에서 사용하여 전파
   const [state, dispatch] = useReducer(reducer, initialState)
   return (
     <TodoStateContext.Provider value ={state}>
@@ -173,6 +176,7 @@ export function TodoProvider({children}: TodoProviderProps) {
   )
 }
 
+// 외부에서 상태 참조 및 디스패치로 상태 변경 가능하게끔 해줌
 export function useTodoState () {
   const state = useContext(TodoStateContext)
   if(!state) throw new Error('Can not find TodoState Provider')
@@ -185,8 +189,7 @@ export function useTodoDispatch () {
   return dispatch
 }
 
-// api function
-
+// api 호출하여 dispatch로 상태변경 가능하게끔 하는 로직
 export async function getTodos (dispatch: Dispatch<ActionType>) {
   try {
     const response = await fetch('/api/todos', header)

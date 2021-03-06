@@ -4,9 +4,8 @@ import { FormType, TodoDataType } from '../type/type'
 
 type TodoDetailFormProps = {
   selectedItem: TodoDataType
-  updateNote: (value: FormType) => void
+  updateNote: (value: string) => void
 }
-
 
 function TodoDetailForm({selectedItem, updateNote}: TodoDetailFormProps) {
   const initialState = {
@@ -17,8 +16,9 @@ function TodoDetailForm({selectedItem, updateNote}: TodoDetailFormProps) {
   const {description} = form
 
   useEffect(() => {
-    updateNote(form)
-  }, [updateNote, form])
+    updateNote(description)
+    //eslint-disable-next-line
+  }, [description])
 
   return (
     <div className="todo__detail-desc">
