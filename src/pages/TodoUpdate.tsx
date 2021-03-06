@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import TodoForm from '../components/TodoForm'
 import { useTodoState, useTodoDispatch, getTodo, putTodo } from '../context/TodoContext'
 import { TodoDataIDType } from '../type/type'
 import Loader from 'react-loader-spinner'
 import NotFound from '../components/NotFound'
+import TodoUpdateForm from '../components/TodoUpdateForm'
 
 function TodoUpdate() {
   const state = useTodoState()
@@ -34,7 +34,7 @@ function TodoUpdate() {
           </div>
         )
       }
-      { todoItem && <TodoForm selectedItem={todoItem} updateTodo={updateTodo} /> }
+      { todoItem && <TodoUpdateForm selectedItem={todoItem} updateTodo={updateTodo} /> }
     </>
   )
 }
