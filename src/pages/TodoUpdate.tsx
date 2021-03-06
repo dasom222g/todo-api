@@ -17,7 +17,6 @@ function TodoUpdate() {
   }
 
   useEffect(() => {
-    console.log('itemId', itemId)
     getTodo(dispatch, itemId)
   }, [dispatch, itemId])
 
