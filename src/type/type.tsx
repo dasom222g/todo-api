@@ -21,7 +21,7 @@ export type byIdType = {
 }
 
 export type NormalDataType = {
-  todos: {
+  items: {
     byId: byIdType,
     allIds: string[]
   }
