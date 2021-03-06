@@ -63,7 +63,6 @@ export type ActionType =
   | { type: 'UPDATE_TODO_ERROR', error: object}
   | { type: 'DELETE_TODO', id: string}
   | { type: 'DELETE_TODO_ERROR', error: object}
-  | { type: 'FETCH_TODOS' }
   | { type: 'FETCH_TODOS_SUCCESS', payload: TodoDataIDType[] }
   | { type: 'FETCH_TODOS_ERROR', error: object }
   | { type: 'FETCH_TODO' }
