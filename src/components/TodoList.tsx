@@ -11,7 +11,7 @@ type TodoListProps = {
   removeTodo: (id: string) => void
 }
 function TodoList({todoList, completeTodo, removeTodo}: TodoListProps) {
-  const {byId, allIds} = todoList.todos
+  const {byId, allIds} = todoList.items
 
   return (
     <section>

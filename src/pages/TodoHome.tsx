@@ -12,7 +12,7 @@ function TodoHome() {
 
   const addTodo = (value: FormType):void => {
     // Todo: TodoForm에서 이미 validation 을 한상태로 value를 보내주기
-    const {allIds, byId} = todoList.todos
+    const {allIds, byId} = todoList.items
     const byIdArr = allIds.map(id => byId[id])
     const sameArr = byIdArr.filter(item => item.title === value.title)
     if (!sameArr.length) {
@@ -27,8 +27,8 @@ function TodoHome() {
 
   const completeTodo = (id: string): void => {
     const changeItem = {
-      ...todoList.todos.byId[id],
-      isComplete: !todoList.todos.byId[id].isComplete
+      ...todoList.items.byId[id],
+      isComplete: !todoList.items.byId[id].isComplete
     }
     putTodo(dispatch, changeItem)
   }

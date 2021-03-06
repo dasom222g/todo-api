@@ -3,22 +3,8 @@ import produce from 'immer'
 import { TodoDataType, TodoDataIDType, NormalDataType, AsyncTodoType, byIdType } from '../type/type'
 import { header, sleep } from '../variable/variable'
 
-// const todosInitialState = (id: string):NormalDataType => ({
-//   todos: {
-//     byId: {
-//       [id]: {
-//         id: 0,
-//         title: '',
-//         description: '',
-//         isComplete: false
-//       }
-//     },
-//     allIds: []
-//   }
-// })
-
 const todosInitialState:NormalDataType = {
-  todos: {
+  items: {
     byId: {},
     allIds: []
   }
@@ -31,19 +17,10 @@ const initialState = {
   error: null
 }
 
-// const addDataFirst = (newItem: TodoDataIDType) => {
-//   const id = newItem.id.toString()
-//   return produce(todosInitialState, draft => {
-//     const { allIds, byId } = draft.todos
-//     allIds.push(id)
-//     byId[id] = newItem
-//   })
-// }
-
 const addItem = (data:NormalDataType, newItem: TodoDataIDType) => {
   const id = newItem.id.toString()
   return produce(data, draft => {
-    const { allIds, byId } = draft.todos
+    const { allIds, byId } = draft.items
     allIds.push(id)
     byId[id] = newItem
   })
@@ -56,7 +33,7 @@ const getList = (data: TodoDataIDType[]): NormalDataType => {
     byId[item.id.toString()] = item
   })
   const todosData: NormalDataType = {
-    todos: {
+    items: {
       byId,
       allIds
     }
@@ -65,13 +42,13 @@ const getList = (data: TodoDataIDType[]): NormalDataType => {
 }
 
 const removeData = (data: NormalDataType, id: string) => {
-  const allIds = data.todos.allIds.filter(itemId => itemId !== id)
-  const byId = produce(data.todos.byId, draft => {
+  const allIds = data.items.allIds.filter(itemId => itemId !== id)
+  const byId = produce(data.items.byId, draft => {
     delete draft[id]
   })
 
   const todosData: NormalDataType = {
-    todos: {
+    items: {
       byId,
       allIds
     }
@@ -86,7 +63,6 @@ export type ActionType =
   | { type: 'UPDATE_TODO_ERROR', error: object}
   | { type: 'DELETE_TODO', id: string}
   | { type: 'DELETE_TODO_ERROR', error: object}
-  | { type: 'FETCH_TODOS' }
   | { type: 'FETCH_TODOS_SUCCESS', payload: TodoDataIDType[] }
   | { type: 'FETCH_TODOS_ERROR', error: object }
   | { type: 'FETCH_TODO' }
@@ -114,7 +90,7 @@ const reducer = (state: AsyncTodoType, action: ActionType): AsyncTodoType => {
       const id = action.payload.id
       return produce(state, draft => {
         draft.isLoading = false
-        draft.data.todos.byId[id] = action.payload
+        draft.data.items.byId[id] = action.payload
         draft.selectedItem = null
         draft.error = null
       })
@@ -138,13 +114,6 @@ const reducer = (state: AsyncTodoType, action: ActionType): AsyncTodoType => {
         draft.data = todosInitialState
         draft.selectedItem = null
         draft.error = action.error
-      })
-    case 'FETCH_TODOS':
-      return produce(state, draft => {
-        draft.isLoading = true
-        draft.data = todosInitialState
-        draft.selectedItem = null
-        draft.error = null
       })
     case 'FETCH_TODOS_SUCCESS':
       return produce(state, draft => {
