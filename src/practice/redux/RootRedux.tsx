@@ -8,13 +8,9 @@ type ReduxProviderProps = {
   children: React.ReactNode
 }
 
-function RootRedux({children}: ReduxProviderProps) {
+function RootRedux({ children }: ReduxProviderProps) {
   const store = createStore(rootReducer, composeWithDevTools())
-  return (
-    <Provider store={store}>
-      {children}
-    </Provider>
-  )
+  return <Provider store={store}>{children}</Provider>
 }
 
 export default RootRedux

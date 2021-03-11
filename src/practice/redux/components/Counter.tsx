@@ -6,17 +6,16 @@ type CounterProps = {
   diff: number
   onIncrease: () => void
   onDecrease: () => void
-  onSetDiff: (diff: number) => void,
+  onSetDiff: (diff: number) => void
 }
 
-
 const intervalStyle = {
-  margin: '10px'
+  margin: '10px',
 }
 
 const textStyle = {
   fontSize: '1.2rem',
-  padding: '10px'
+  padding: '10px',
 }
 
 const buttonStyle = {
@@ -24,11 +23,11 @@ const buttonStyle = {
   padding: '4px',
   borderRadius: '2px',
   fontSize: '1.2rem',
-  margin: '0 5px'
+  margin: '0 5px',
 }
 function Counter({ number, diff, onIncrease, onDecrease, onSetDiff }: CounterProps) {
   const initialState = {
-    diffNum: diff
+    diffNum: diff,
   }
   const [form, onChange] = useInputs(initialState)
   const { diffNum } = form
@@ -43,18 +42,22 @@ function Counter({ number, diff, onIncrease, onDecrease, onSetDiff }: CounterPro
 
   return (
     <div>
-      <h1 style={textStyle}>{ number }</h1>
+      <h1 style={textStyle}>{number}</h1>
       <input
         type="number"
         placeholder="set diff number"
         name="diffNum"
         style={intervalStyle}
-        value={ diffNum }
+        value={diffNum}
         onChange={handleChange}
       />
       <div style={intervalStyle}>
-        <button type="button" style={buttonStyle} onClick={onIncrease}>+</button>
-        <button type="button" style={buttonStyle} onClick={onDecrease}>-</button>
+        <button type="button" style={buttonStyle} onClick={onIncrease}>
+          +
+        </button>
+        <button type="button" style={buttonStyle} onClick={onDecrease}>
+          -
+        </button>
       </div>
     </div>
   )

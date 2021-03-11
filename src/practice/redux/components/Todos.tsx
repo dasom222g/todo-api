@@ -7,16 +7,15 @@ type TodoItemProps = {
   onCompleteTodo: (id: number) => void
 }
 
-const TodoItem = React.memo(({ todo, onCompleteTodo}: TodoItemProps) => {
+const TodoItem = React.memo(({ todo, onCompleteTodo }: TodoItemProps) => {
   console.log('TodoItem render')
   return (
     <li
       style={{
-        textDecoration: todo.isComplete ? 'line-through' : 'none'
+        textDecoration: todo.isComplete ? 'line-through' : 'none',
       }}
-      onClick={() => onCompleteTodo(todo.id)}
-    >
-      { todo.title }
+      onClick={() => onCompleteTodo(todo.id)}>
+      {todo.title}
     </li>
   )
 })
@@ -26,11 +25,13 @@ type TodoListProps = {
   onCompleteTodo: (id: number) => void
 }
 
-const TodoList = React.memo(({ todos, onCompleteTodo}: TodoListProps) => {
+const TodoList = React.memo(({ todos, onCompleteTodo }: TodoListProps) => {
   console.log('todoList render')
   return (
     <ul>
-      {todos.map(todo => <TodoItem key={todo.id} todo={todo} onCompleteTodo={onCompleteTodo} />)}
+      {todos.map((todo) => (
+        <TodoItem key={todo.id} todo={todo} onCompleteTodo={onCompleteTodo} />
+      ))}
     </ul>
   )
 })
@@ -41,10 +42,10 @@ type TodosProps = {
   onCompleteTodo: (id: number) => void
 }
 
-function Todos({ todos, onAddTodo, onCompleteTodo}: TodosProps) {
+function Todos({ todos, onAddTodo, onCompleteTodo }: TodosProps) {
   console.log('todos render')
   const initialState = {
-    title: ''
+    title: '',
   }
 
   const [form, onChange, reset] = useInputs(initialState)
@@ -59,12 +60,7 @@ function Todos({ todos, onAddTodo, onCompleteTodo}: TodosProps) {
   return (
     <div>
       <form action="/create" method="post" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="title"
-          value={title}
-          onChange={onChange}
-        />
+        <input type="text" name="title" value={title} onChange={onChange} />
         <button>등록</button>
       </form>
       <TodoList todos={todos} onCompleteTodo={onCompleteTodo} />
