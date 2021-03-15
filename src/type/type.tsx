@@ -1,18 +1,18 @@
 export type SampleStateType = 'loading' | 'success' | 'error'
 
 export type SampleTodoItemType = {
-  id: number,
+  id: number
   title: string
 }
 
 export type SampleTodosType = {
-  loading: boolean,
-  data: SampleTodoItemType | null,
+  loading: boolean
+  data: SampleTodoItemType | null
   state: SampleStateType
 }
 
 export type FormType = {
-  title: string,
+  title: string
   description: string
 }
 
@@ -22,51 +22,65 @@ export type byIdType = {
 
 export type NormalDataType = {
   items: {
-    byId: byIdType,
+    byId: byIdType
     allIds: string[]
   }
 }
 
 export type TodoDataType = {
-  title: string,
-  description: string,
+  title: string
+  description: string
   isComplete: boolean
 }
 
 export type TodoDataIDType = {
-  id: number,
-  title: string,
-  description: string,
+  id: number
+  title: string
+  description: string
   isComplete: boolean
 }
 
 export type AsyncTodoType = {
-  isLoading: boolean,
-  data: NormalDataType,
+  isLoading: boolean
+  data: NormalDataType
   selectedItem: TodoDataIDType | null
-  error: object | null,
+  error: object | null
 }
 
-// export let byIdType: { [key: string]: TodoDataIDType }
-
+export type ActionType =
+  | { type: 'ADD_TODO_SUCSESS'; payload: TodoDataIDType; id: string }
+  | { type: 'ADD_TODO_ERROR'; error: object }
+  | { type: 'UPDATE_TODO'; payload: TodoDataIDType }
+  | { type: 'UPDATE_TODO_ERROR'; error: object }
+  | { type: 'DELETE_TODO'; id: string }
+  | { type: 'DELETE_TODO_ERROR'; error: object }
+  | { type: 'FETCH_TODOS_SUCCESS'; payload: TodoDataIDType[] }
+  | { type: 'FETCH_TODOS_ERROR'; error: object }
+  | { type: 'FETCH_TODO' }
+  | { type: 'FETCH_TODO_SUCCESS'; payload: TodoDataIDType; id: string }
+  | { type: 'FETCH_TODO_ERROR'; error: object }
 
 export const formInitialState = {
   title: '',
-  description: ''
+  description: '',
 }
 
+export interface IRootState {
+  todos: AsyncTodoType
+}
 
-
-// const initialData = {
+// const initialState = {
+//   isLoading: false,
 //   todos: {
+//     allIds: ['1'],
 //     byId: {
-//       '0': {
-//         id: '0',
-//         title: '',
-//         description: '',
-//         isComplete: false
+//       '1': {
+//         id: 1,
+//         title: '할일',
+//         description: '할일 설명',
+//         isComplete: false,
 //       }
-//     },
-//     allIds: ['0']
-//   }
+//     }
+//   },
+//   error: null
 // }
