@@ -62,9 +62,10 @@ export const postTodo = (title: string) => async (dispatch: Dispatch<ActionType>
       method: 'POST',
       body: JSON.stringify(newItem),
     })
-    const result = await response.json()
+    const result: TodoDataIDType = await response.json()
     dispatch(addTodoSuccess(result))
   } catch (e) {
+    console.error(e)
     dispatch(addTodoError(e))
   }
 }
@@ -98,12 +99,13 @@ const addItem = (todos: NormalDataType, newItem: TodoDataIDType, id: string): No
   }
 }
 
-const getList = (data: TodoDataIDType[]) => {
-  const allIds = data.map((todo) => todo.id.toString())
+const getList = (data: TodoDataIDType[] | null) => {
+  const allIds = data ? data.map((todo) => todo.id.toString()) : []
   let byId: byIdType = {}
-  data.forEach((item) => {
-    byId[item.id.toString()] = item
-  })
+  data &&
+    data.forEach((item) => {
+      byId[item.id.toString()] = item
+    })
   return {
     items: {
       allIds,
@@ -112,7 +114,10 @@ const getList = (data: TodoDataIDType[]) => {
   }
 }
 
-export default function todos(state: AsyncTodoType = initialState, action: ActionType) {
+export default function todos(
+  state: AsyncTodoType = initialState,
+  action: ActionType,
+): AsyncTodoType {
   switch (action.type) {
     case ADD_TODO_SUCSESS:
       return {
@@ -126,7 +131,7 @@ export default function todos(state: AsyncTodoType = initialState, action: Actio
         ...state,
         isLoading: false,
         data: todosInitialState,
-        error: action.type,
+        error: action.error,
       }
     case FETCH_TODOS_SUCCESS:
       return {
@@ -136,6 +141,7 @@ export default function todos(state: AsyncTodoType = initialState, action: Actio
         error: null,
       }
     case FETCH_TODOS_ERROR:
+      console.log('error', typeof action.error, action.error)
       return {
         ...state,
         isLoading: false,
