@@ -15,6 +15,13 @@ const FETCH_TODOS_SUCCESS = 'FETCH_TODOS_SUCCESS'
 const FETCH_TODOS_ERROR = 'FETCH_TODOS_ERROR'
 const ADD_TODO_SUCSESS = 'ADD_TODO_SUCSESS'
 const ADD_TODO_ERROR = 'ADD_TODO_ERROR'
+const DELETE_TODO = 'DELETE_TODO'
+const DELETE_TODO_ERROR = 'DELETE_TODO_ERROR'
+// const FETCH_TODO = 'FETCH_TODO'
+// const FETCH_TODO_SUCCESS = 'FETCH_TODO_SUCCESS'
+// const FETCH_TODO_ERROR = 'FETCH_TODO_ERROR'
+// const UPDATE_TODO = 'UPDATE_TODO'
+// const UPDATE_TODO_ERROR = 'UPDATE_TODO_ERROR'
 
 // action creator
 
@@ -36,6 +43,16 @@ const addTodoSuccess = (newItem: TodoDataIDType): ActionType => ({
 
 const addTodoError = <T extends object>(e: T): ActionType => ({
   type: ADD_TODO_ERROR,
+  error: e,
+})
+
+const deleteTodo = (id: string): ActionType => ({
+  type: DELETE_TODO,
+  id,
+})
+
+const deleteTodoError = <T extends object>(e: T): ActionType => ({
+  type: DELETE_TODO_ERROR,
   error: e,
 })
 
@@ -65,8 +82,18 @@ export const postTodo = (title: string) => async (dispatch: Dispatch<ActionType>
     const result: TodoDataIDType = await response.json()
     dispatch(addTodoSuccess(result))
   } catch (e) {
-    console.error(e)
     dispatch(addTodoError(e))
+  }
+}
+
+export const removeTodo = (id: string) => async (dispatch: Dispatch<ActionType>) => {
+  try {
+    await fetch(`/api/todos/${id}`, {
+      method: 'DELETE',
+    })
+    dispatch(deleteTodo(id))
+  } catch (e) {
+    dispatch(deleteTodoError(e))
   }
 }
 
@@ -86,6 +113,23 @@ const initialState: AsyncTodoType = {
   error: null,
 }
 
+const getList = (data: TodoDataIDType[] | null) => {
+  const allIds = data ? data.map((todo) => todo.id.toString()) : []
+  const byId = data
+    ? data.reduce((acc: byIdType, current: TodoDataIDType) => {
+        const id = current.id.toString()
+        acc[id] = current
+        return acc
+      }, {})
+    : {}
+  return {
+    items: {
+      allIds,
+      byId,
+    },
+  }
+}
+
 const addItem = (todos: NormalDataType, newItem: TodoDataIDType, id: string): NormalDataType => {
   const { byId, allIds } = todos.items
   return {
@@ -99,15 +143,14 @@ const addItem = (todos: NormalDataType, newItem: TodoDataIDType, id: string): No
   }
 }
 
-const getList = (data: TodoDataIDType[] | null) => {
-  const allIds = data ? data.map((todo) => todo.id.toString()) : []
-  const byId = data
-    ? data.reduce((acc: byIdType, current: TodoDataIDType) => {
-        const id = current.id.toString()
-        acc[id] = current
-        return acc
-      }, {})
-    : {}
+const removeItem = (stateData: NormalDataType, id: string): NormalDataType => {
+  const allIds = stateData.items.allIds.filter((itemId) => itemId !== id)
+  const byId = allIds.reduce((acc: byIdType, current: string) => {
+    if (current !== id) {
+      acc[current] = stateData.items.byId[current]
+    }
+    return acc
+  }, {})
   return {
     items: {
       allIds,
@@ -143,7 +186,20 @@ export default function todos(
         error: null,
       }
     case FETCH_TODOS_ERROR:
-      console.log('error', typeof action.error, action.error)
+      return {
+        ...state,
+        isLoading: false,
+        data: todosInitialState,
+        error: action.error,
+      }
+    case DELETE_TODO:
+      return {
+        ...state,
+        isLoading: false,
+        data: removeItem(state.data, action.id),
+        error: null,
+      }
+    case DELETE_TODO_ERROR:
       return {
         ...state,
         isLoading: false,

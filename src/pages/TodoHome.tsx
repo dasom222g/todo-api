@@ -3,7 +3,7 @@ import TodoForm from '../components/TodoForm'
 import TodoList from '../components/TodoList'
 import { ActionType, AsyncTodoType, IRootState } from '../type/type'
 import NotFound from '../components/NotFound'
-import { getTodos, postTodo } from '../modules/todos'
+import { getTodos, postTodo, removeTodo as removeThunk } from '../modules/todos'
 import { useSelector, useDispatch } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { AnyAction } from 'redux'
@@ -26,8 +26,7 @@ function TodoHome() {
   }
 
   const removeTodo = (id: string): void => {
-    // const removeItem = todoList.todos.byId[id]
-    // deleteTodo(dispatch, id)
+    dispatch(removeThunk(id))
   }
 
   useEffect(() => {
