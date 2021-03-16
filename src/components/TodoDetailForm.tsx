@@ -7,13 +7,13 @@ type TodoDetailFormProps = {
   updateNote: (value: string) => void
 }
 
-function TodoDetailForm({selectedItem, updateNote}: TodoDetailFormProps) {
+function TodoDetailForm({ selectedItem, updateNote }: TodoDetailFormProps) {
   const initialState = {
     title: selectedItem.title,
-    description: selectedItem.description
+    description: selectedItem.description,
   }
   const [form, onChange] = useInputs<FormType>(initialState)
-  const {description} = form
+  const { description } = form
 
   useEffect(() => {
     updateNote(description)
@@ -26,8 +26,7 @@ function TodoDetailForm({selectedItem, updateNote}: TodoDetailFormProps) {
         placeholder="Write a note.."
         name="description"
         value={description}
-        onChange={onChange}
-      ></textarea>
+        onChange={onChange}></textarea>
     </div>
   )
 }

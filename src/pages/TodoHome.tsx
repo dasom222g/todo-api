@@ -1,28 +1,27 @@
 import React, { useEffect } from 'react'
 import TodoForm from '../components/TodoForm'
 import TodoList from '../components/TodoList'
-import { ActionType, AsyncTodoType, IRootState } from '../type/type'
+import { IRootState, ThunkTodoDispatchType } from '../type/type'
 import NotFound from '../components/NotFound'
-import { getTodos, postTodo, removeTodo as removeThunk } from '../modules/todos'
+import { getTodos, postTodo, putTodo, removeTodo as removeThunk } from '../modules/todos'
 import { useSelector, useDispatch } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
-import { AnyAction } from 'redux'
-
-type ThunkTodoDispatchType = ThunkDispatch<AsyncTodoType, ActionType, AnyAction>
 
 function TodoHome() {
   const { data: todos, error } = useSelector((state: IRootState) => state.todos)
+  const { allIds, byId } = todos.items
   const dispatch: ThunkTodoDispatchType = useDispatch()
-
   const addTodo = (title: string): void => {
-    const { allIds, byId } = todos.items
     const sameFilter = allIds.filter((id) => byId[id].title === title)
     if (sameFilter.length) return
     dispatch(postTodo(title))
   }
 
   const completeTodo = (id: string): void => {
-    // putTodo(dispatch, changeItem)
+    const changeItem = {
+      ...byId[id],
+      isComplete: !byId[id].isComplete,
+    }
+    dispatch(putTodo(changeItem))
   }
 
   const removeTodo = (id: string): void => {

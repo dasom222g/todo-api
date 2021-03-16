@@ -7,21 +7,21 @@ import {
   TodoDataIDType,
   TodoDataType,
 } from '../type/type'
-import { header } from '../variable/variable'
+import { header, sleep } from '../variable/variable'
 
 // action type
 
 const FETCH_TODOS_SUCCESS = 'FETCH_TODOS_SUCCESS'
 const FETCH_TODOS_ERROR = 'FETCH_TODOS_ERROR'
+const FETCH_TODO = 'FETCH_TODO'
+const FETCH_TODO_SUCCESS = 'FETCH_TODO_SUCCESS'
+const FETCH_TODO_ERROR = 'FETCH_TODO_ERROR'
 const ADD_TODO_SUCSESS = 'ADD_TODO_SUCSESS'
 const ADD_TODO_ERROR = 'ADD_TODO_ERROR'
+const UPDATE_TODO = 'UPDATE_TODO'
+const UPDATE_TODO_ERROR = 'UPDATE_TODO_ERROR'
 const DELETE_TODO = 'DELETE_TODO'
 const DELETE_TODO_ERROR = 'DELETE_TODO_ERROR'
-// const FETCH_TODO = 'FETCH_TODO'
-// const FETCH_TODO_SUCCESS = 'FETCH_TODO_SUCCESS'
-// const FETCH_TODO_ERROR = 'FETCH_TODO_ERROR'
-// const UPDATE_TODO = 'UPDATE_TODO'
-// const UPDATE_TODO_ERROR = 'UPDATE_TODO_ERROR'
 
 // action creator
 
@@ -35,6 +35,21 @@ const fetchTodosError = <T extends object>(e: T): ActionType => ({
   error: e,
 })
 
+const fetchTodo = (): ActionType => ({
+  type: FETCH_TODO,
+})
+
+const fetchTodoSuccess = (payload: TodoDataIDType, id: string): ActionType => ({
+  type: FETCH_TODO_SUCCESS,
+  payload,
+  id,
+})
+
+const fetchTodoError = <T extends object>(e: T): ActionType => ({
+  type: FETCH_TODO_ERROR,
+  error: e,
+})
+
 const addTodoSuccess = (newItem: TodoDataIDType): ActionType => ({
   type: ADD_TODO_SUCSESS,
   payload: newItem,
@@ -43,6 +58,16 @@ const addTodoSuccess = (newItem: TodoDataIDType): ActionType => ({
 
 const addTodoError = <T extends object>(e: T): ActionType => ({
   type: ADD_TODO_ERROR,
+  error: e,
+})
+
+const updateTodo = (changeItem: TodoDataIDType): ActionType => ({
+  type: UPDATE_TODO,
+  payload: changeItem,
+})
+
+const updateTodoError = <T extends object>(e: T): ActionType => ({
+  type: UPDATE_TODO_ERROR,
   error: e,
 })
 
@@ -68,6 +93,18 @@ export const getTodos = () => async (dispatch: Dispatch<ActionType>) => {
   }
 }
 
+export const getTodo = (id: string) => async (dispatch: Dispatch<ActionType>) => {
+  dispatch(fetchTodo())
+  await sleep(500)
+  try {
+    const response = await fetch(`/api/todos/${id}`)
+    const result = await response.json()
+    dispatch(fetchTodoSuccess(result, id))
+  } catch (e) {
+    dispatch(fetchTodoError(e))
+  }
+}
+
 export const postTodo = (title: string) => async (dispatch: Dispatch<ActionType>) => {
   const newItem: TodoDataType = {
     title,
@@ -83,6 +120,20 @@ export const postTodo = (title: string) => async (dispatch: Dispatch<ActionType>
     dispatch(addTodoSuccess(result))
   } catch (e) {
     dispatch(addTodoError(e))
+  }
+}
+
+export const putTodo = (changeItem: TodoDataIDType) => async (dispatch: Dispatch<ActionType>) => {
+  const id = changeItem.id.toString()
+  try {
+    const response = await fetch(`/api/todos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(changeItem),
+    })
+    const result = await response.json()
+    dispatch(updateTodo(result))
+  } catch (e) {
+    dispatch(updateTodoError(e))
   }
 }
 
@@ -113,7 +164,7 @@ const initialState: AsyncTodoType = {
   error: null,
 }
 
-const getList = (data: TodoDataIDType[] | null) => {
+const getList = (data: TodoDataIDType[] | null): NormalDataType => {
   const allIds = data ? data.map((todo) => todo.id.toString()) : []
   const byId = data
     ? data.reduce((acc: byIdType, current: TodoDataIDType) => {
@@ -130,6 +181,20 @@ const getList = (data: TodoDataIDType[] | null) => {
   }
 }
 
+const getItemById = (state: AsyncTodoType, item: TodoDataIDType, id: string): byIdType => {
+  const { selectedItem } = state
+  if (selectedItem) {
+    return {
+      ...selectedItem,
+      [id]: item,
+    }
+  } else {
+    return {
+      [id]: item,
+    }
+  }
+}
+
 const addItem = (todos: NormalDataType, newItem: TodoDataIDType, id: string): NormalDataType => {
   const { byId, allIds } = todos.items
   return {
@@ -138,6 +203,20 @@ const addItem = (todos: NormalDataType, newItem: TodoDataIDType, id: string): No
       byId: {
         ...byId,
         [id]: newItem,
+      },
+    },
+  }
+}
+
+const updateItem = (stateData: NormalDataType, changeItem: TodoDataIDType): NormalDataType => {
+  const { allIds, byId } = stateData.items
+  const id = changeItem.id.toString()
+  return {
+    items: {
+      allIds,
+      byId: {
+        ...byId,
+        [id]: changeItem,
       },
     },
   }
@@ -178,6 +257,19 @@ export default function todos(
         data: todosInitialState,
         error: action.error,
       }
+    case UPDATE_TODO:
+      return {
+        ...state,
+        data: updateItem(state.data, action.payload),
+        error: null,
+      }
+    case UPDATE_TODO_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        data: todosInitialState,
+        error: action.error,
+      }
     case FETCH_TODOS_SUCCESS:
       return {
         ...state,
@@ -190,6 +282,29 @@ export default function todos(
         ...state,
         isLoading: false,
         data: todosInitialState,
+        error: action.error,
+      }
+    case FETCH_TODO:
+      return {
+        ...state,
+        isLoading: true,
+        data: state.data,
+        error: null,
+      }
+    case FETCH_TODO_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        data: state.data,
+        selectedItem: getItemById(state, action.payload, action.id),
+        error: null,
+      }
+    case FETCH_TODO_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        data: state.data,
+        selectedItem: null,
         error: action.error,
       }
     case DELETE_TODO:

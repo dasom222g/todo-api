@@ -1,3 +1,6 @@
+import { AnyAction } from 'redux'
+import { ThunkDispatch } from 'redux-thunk'
+
 export type SampleStateType = 'loading' | 'success' | 'error'
 
 export type SampleTodoItemType = {
@@ -43,7 +46,7 @@ export type TodoDataIDType = {
 export type AsyncTodoType = {
   isLoading: boolean
   data: NormalDataType
-  selectedItem: TodoDataIDType | null
+  selectedItem: byIdType | null
   error: object | null
 }
 
@@ -68,6 +71,8 @@ export const formInitialState = {
 export interface IRootState {
   todos: AsyncTodoType
 }
+
+export type ThunkTodoDispatchType = ThunkDispatch<AsyncTodoType, ActionType, AnyAction>
 
 // const initialState = {
 //   isLoading: false,
