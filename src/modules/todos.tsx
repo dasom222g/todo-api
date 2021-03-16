@@ -100,12 +100,17 @@ const addItem = (todos: NormalDataType, newItem: TodoDataIDType, id: string): No
 }
 
 const getList = (data: TodoDataIDType[] | null) => {
+  const numbers = [1, 2, 3, 4, 5, 6]
+  console.log(numbers.reduce((acc, current) => acc + current, 0))
   const allIds = data ? data.map((todo) => todo.id.toString()) : []
-  let byId: byIdType = {}
-  data &&
-    data.forEach((item) => {
-      byId[item.id.toString()] = item
-    })
+  const byId = data
+    ? data.reduce((acc: byIdType, current: TodoDataIDType) => {
+        const id = current.id.toString()
+        acc[id] = current
+        return acc
+      }, {})
+    : {}
+  console.log('allIds', allIds)
   return {
     items: {
       allIds,
