@@ -149,15 +149,13 @@ export const removeTodo = (id: string) => async (dispatch: Dispatch<ActionType>)
 // reducer
 
 const todosInitialState: NormalDataType = {
-  items: {
-    byId: {},
-    allIds: [],
-  },
+  byId: {},
+  allIds: [],
 }
 
 const initialState: AsyncTodoType = {
   isLoading: false,
-  data: todosInitialState,
+  items: todosInitialState,
   error: null,
 }
 
@@ -171,53 +169,49 @@ const getList = (data: TodoDataIDType[] | null): NormalDataType => {
       }, {})
     : {}
   return {
-    items: {
-      allIds,
-      byId,
-    },
+    allIds,
+    byId,
   }
 }
 
-const addItem = (todos: NormalDataType, newItem: TodoDataIDType, id: string): NormalDataType => {
-  const { byId, allIds } = todos.items
+const addItem = (
+  stateData: NormalDataType,
+  newItem: TodoDataIDType,
+  id: string,
+): NormalDataType => {
+  const { byId, allIds } = stateData
   return {
-    items: {
-      allIds: [...allIds, id],
-      byId: {
-        ...byId,
-        [id]: newItem,
-      },
+    allIds: [...allIds, id],
+    byId: {
+      ...byId,
+      [id]: newItem,
     },
   }
 }
 
 const updateItem = (stateData: NormalDataType, changeItem: TodoDataIDType): NormalDataType => {
-  const { allIds, byId } = stateData.items
+  const { allIds, byId } = stateData
   const id = changeItem.id.toString()
   return {
-    items: {
-      allIds,
-      byId: {
-        ...byId,
-        [id]: changeItem,
-      },
+    allIds,
+    byId: {
+      ...byId,
+      [id]: changeItem,
     },
   }
 }
 
 const removeItem = (stateData: NormalDataType, id: string): NormalDataType => {
-  const allIds = stateData.items.allIds.filter((itemId) => itemId !== id)
+  const allIds = stateData.allIds.filter((itemId) => itemId !== id)
   const byId = allIds.reduce((acc: byIdType, current: string) => {
     if (current !== id) {
-      acc[current] = stateData.items.byId[current]
+      acc[current] = stateData.byId[current]
     }
     return acc
   }, {})
   return {
-    items: {
-      allIds,
-      byId,
-    },
+    allIds,
+    byId,
   }
 }
 
@@ -230,62 +224,59 @@ export default function todos(
       return {
         ...state,
         isLoading: false,
-        data: addItem(state.data, action.payload, action.id),
+        items: addItem(state.items, action.payload, action.id),
         error: null,
       }
     case ADD_TODO_ERROR:
       return {
         ...state,
         isLoading: false,
-        data: todosInitialState,
+        items: todosInitialState,
         error: action.error,
       }
     case UPDATE_TODO:
       return {
         ...state,
-        data: updateItem(state.data, action.payload),
+        items: updateItem(state.items, action.payload),
         error: null,
       }
     case UPDATE_TODO_ERROR:
       return {
         ...state,
         isLoading: false,
-        data: todosInitialState,
+        items: todosInitialState,
         error: action.error,
       }
     case FETCH_TODOS_SUCCESS:
       return {
         ...state,
         isLoading: false,
-        data: getList(action.payload),
+        items: getList(action.payload),
         error: null,
       }
     case FETCH_TODOS_ERROR:
       return {
         ...state,
         isLoading: false,
-        data: todosInitialState,
+        items: todosInitialState,
         error: action.error,
       }
     case FETCH_TODO:
       return {
         ...state,
         isLoading: true,
-        data: state.data,
+        items: state.items,
         error: null,
       }
     case FETCH_TODO_SUCCESS:
       return {
         ...state,
         isLoading: false,
-        data: {
-          ...state.data,
-          items: {
-            ...state.data.items,
-            byId: {
-              ...state.data.items.byId,
-              [action.id]: action.payload,
-            },
+        items: {
+          ...state.items,
+          byId: {
+            ...state.items.byId,
+            [action.id]: action.payload,
           },
         },
         error: null,
@@ -294,21 +285,21 @@ export default function todos(
       return {
         ...state,
         isLoading: false,
-        data: state.data,
+        items: todosInitialState,
         error: action.error,
       }
     case DELETE_TODO:
       return {
         ...state,
         isLoading: false,
-        data: removeItem(state.data, action.id),
+        items: removeItem(state.items, action.id),
         error: null,
       }
     case DELETE_TODO_ERROR:
       return {
         ...state,
         isLoading: false,
-        data: todosInitialState,
+        items: todosInitialState,
         error: action.error,
       }
     default:

@@ -7,8 +7,8 @@ import { getTodos, postTodo, putTodo, removeTodo as removeThunk } from '../modul
 import { useSelector, useDispatch } from 'react-redux'
 
 function TodoHome() {
-  const { data: todos, error } = useSelector((state: IRootState) => state.todos)
-  const { allIds, byId } = todos.items
+  const { items: todos, error } = useSelector((state: IRootState) => state.todos)
+  const { allIds, byId } = todos
   const dispatch: ThunkTodoDispatchType = useDispatch()
   const addTodo = (title: string): void => {
     const sameFilter = allIds.filter((id) => byId[id].title === title)

@@ -24,10 +24,8 @@ export type byIdType = {
 }
 
 export type NormalDataType = {
-  items: {
-    byId: byIdType
-    allIds: string[]
-  }
+  byId: byIdType
+  allIds: string[]
 }
 
 export type TodoDataType = {
@@ -45,7 +43,7 @@ export type TodoDataIDType = {
 
 export type AsyncTodoType = {
   isLoading: boolean
-  data: NormalDataType
+  items: NormalDataType
   error: object | null
 }
 

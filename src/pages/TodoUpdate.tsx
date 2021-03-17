@@ -9,10 +9,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getTodo, putTodo } from '../modules/todos'
 
 function TodoUpdate() {
-  const { isLoading, data: todos, error } = useSelector((state: IRootState) => state.todos)
+  const { isLoading, items: todos, error } = useSelector((state: IRootState) => state.todos)
   const dispatch: ThunkTodoDispatchType = useDispatch()
   const { itemId } = useParams<{ itemId: string }>()
-  const selectItem = todos.items.byId[itemId]
+  const selectItem = todos.byId[itemId]
 
   const updateTodo = (updateItem: TodoDataIDType) => {
     dispatch(putTodo(updateItem))
