@@ -1,4 +1,5 @@
 import { Dispatch } from 'react'
+import { produce } from 'immer'
 import {
   ActionType,
   AsyncTodoType,
@@ -8,20 +9,21 @@ import {
   TodoDataType,
 } from '../type/type'
 import { header, sleep } from '../variable/variable'
+import { errorState, successState } from '../utils/asyncUtils'
 
 // action type
 
-const FETCH_TODOS_SUCCESS = 'FETCH_TODOS_SUCCESS'
-const FETCH_TODOS_ERROR = 'FETCH_TODOS_ERROR'
-const FETCH_TODO = 'FETCH_TODO'
-const FETCH_TODO_SUCCESS = 'FETCH_TODO_SUCCESS'
-const FETCH_TODO_ERROR = 'FETCH_TODO_ERROR'
-const ADD_TODO_SUCSESS = 'ADD_TODO_SUCSESS'
-const ADD_TODO_ERROR = 'ADD_TODO_ERROR'
-const UPDATE_TODO = 'UPDATE_TODO'
-const UPDATE_TODO_ERROR = 'UPDATE_TODO_ERROR'
-const DELETE_TODO = 'DELETE_TODO'
-const DELETE_TODO_ERROR = 'DELETE_TODO_ERROR'
+export const FETCH_TODOS_SUCCESS = 'FETCH_TODOS_SUCCESS'
+export const FETCH_TODOS_ERROR = 'FETCH_TODOS_ERROR'
+export const FETCH_TODO = 'FETCH_TODO'
+export const FETCH_TODO_SUCCESS = 'FETCH_TODO_SUCCESS'
+export const FETCH_TODO_ERROR = 'FETCH_TODO_ERROR'
+export const ADD_TODO_SUCSESS = 'ADD_TODO_SUCSESS'
+export const ADD_TODO_ERROR = 'ADD_TODO_ERROR'
+export const UPDATE_TODO = 'UPDATE_TODO'
+export const UPDATE_TODO_ERROR = 'UPDATE_TODO_ERROR'
+export const DELETE_TODO = 'DELETE_TODO'
+export const DELETE_TODO_ERROR = 'DELETE_TODO_ERROR'
 
 // action creator
 
@@ -148,7 +150,7 @@ export const removeTodo = (id: string) => async (dispatch: Dispatch<ActionType>)
 
 // reducer
 
-const todosInitialState: NormalDataType = {
+export const todosInitialState: NormalDataType = {
   byId: {},
   allIds: [],
 }
@@ -172,6 +174,12 @@ const getList = (data: TodoDataIDType[] | null): NormalDataType => {
     allIds,
     byId,
   }
+}
+
+const getItem = (stateData: NormalDataType, item: TodoDataIDType, id: string): NormalDataType => {
+  return produce(stateData, (draft) => {
+    draft.byId[id] = item
+  })
 }
 
 const addItem = (
@@ -220,88 +228,27 @@ export default function todos(
   action: ActionType,
 ): AsyncTodoType {
   switch (action.type) {
-    case ADD_TODO_SUCSESS:
-      return {
-        ...state,
-        isLoading: false,
-        items: addItem(state.items, action.payload, action.id),
-        error: null,
-      }
-    case ADD_TODO_ERROR:
-      return {
-        ...state,
-        isLoading: false,
-        items: todosInitialState,
-        error: action.error,
-      }
-    case UPDATE_TODO:
-      return {
-        ...state,
-        items: updateItem(state.items, action.payload),
-        error: null,
-      }
-    case UPDATE_TODO_ERROR:
-      return {
-        ...state,
-        isLoading: false,
-        items: todosInitialState,
-        error: action.error,
-      }
-    case FETCH_TODOS_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
-        items: getList(action.payload),
-        error: null,
-      }
-    case FETCH_TODOS_ERROR:
-      return {
-        ...state,
-        isLoading: false,
-        items: todosInitialState,
-        error: action.error,
-      }
     case FETCH_TODO:
-      return {
-        ...state,
-        isLoading: true,
-        items: state.items,
-        error: null,
-      }
+      return produce(state, (draft) => {
+        draft.isLoading = true
+        draft.error = null
+      })
+    case ADD_TODO_SUCSESS:
+      return successState(state, action, addItem(state.items, action.payload, action.id))
+    case UPDATE_TODO:
+      return successState(state, action, updateItem(state.items, action.payload))
+    case FETCH_TODOS_SUCCESS:
+      return successState(state, action, getList(action.payload))
     case FETCH_TODO_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
-        items: {
-          ...state.items,
-          byId: {
-            ...state.items.byId,
-            [action.id]: action.payload,
-          },
-        },
-        error: null,
-      }
-    case FETCH_TODO_ERROR:
-      return {
-        ...state,
-        isLoading: false,
-        items: todosInitialState,
-        error: action.error,
-      }
+      return successState(state, action, getItem(state.items, action.payload, action.id))
     case DELETE_TODO:
-      return {
-        ...state,
-        isLoading: false,
-        items: removeItem(state.items, action.id),
-        error: null,
-      }
+      return successState(state, action, removeItem(state.items, action.id))
+    case ADD_TODO_ERROR:
+    case FETCH_TODOS_ERROR:
+    case FETCH_TODO_ERROR:
+    case UPDATE_TODO_ERROR:
     case DELETE_TODO_ERROR:
-      return {
-        ...state,
-        isLoading: false,
-        items: todosInitialState,
-        error: action.error,
-      }
+      return errorState(state, action)
     default:
       return state
   }
