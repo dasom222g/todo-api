@@ -1,5 +1,18 @@
 import { AnyAction } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
+import {
+  FETCH_TODOS_SUCCESS,
+  FETCH_TODOS_ERROR,
+  FETCH_TODO,
+  FETCH_TODO_SUCCESS,
+  FETCH_TODO_ERROR,
+  ADD_TODO_SUCCESS,
+  ADD_TODO_ERROR,
+  UPDATE_TODO_SUCCESS,
+  UPDATE_TODO_ERROR,
+  DELETE_TODO_SUCCESS,
+  DELETE_TODO_ERROR,
+} from '../modules/todos'
 
 export type SampleStateType = 'loading' | 'success' | 'error'
 
@@ -48,17 +61,17 @@ export type AsyncTodoType = {
 }
 
 export type ActionType =
-  | { type: 'ADD_TODO_SUCSESS'; payload: TodoDataIDType; id: string }
-  | { type: 'ADD_TODO_ERROR'; error: object }
-  | { type: 'UPDATE_TODO'; payload: TodoDataIDType }
-  | { type: 'UPDATE_TODO_ERROR'; error: object }
-  | { type: 'DELETE_TODO'; id: string }
-  | { type: 'DELETE_TODO_ERROR'; error: object }
-  | { type: 'FETCH_TODOS_SUCCESS'; payload: TodoDataIDType[] }
-  | { type: 'FETCH_TODOS_ERROR'; error: object }
-  | { type: 'FETCH_TODO' }
-  | { type: 'FETCH_TODO_SUCCESS'; payload: TodoDataIDType; id: string }
-  | { type: 'FETCH_TODO_ERROR'; error: object }
+  | { type: typeof FETCH_TODOS_SUCCESS; payload: TodoDataIDType[] }
+  | { type: typeof FETCH_TODOS_ERROR; error: object }
+  | { type: typeof FETCH_TODO }
+  | { type: typeof FETCH_TODO_SUCCESS; payload: TodoDataIDType; id: string }
+  | { type: typeof FETCH_TODO_ERROR; error: object }
+  | { type: typeof ADD_TODO_SUCCESS; payload: TodoDataIDType; id: string }
+  | { type: typeof ADD_TODO_ERROR; error: object }
+  | { type: typeof UPDATE_TODO_SUCCESS; payload: TodoDataIDType }
+  | { type: typeof UPDATE_TODO_ERROR; error: object }
+  | { type: typeof DELETE_TODO_SUCCESS; id: string }
+  | { type: typeof DELETE_TODO_ERROR; error: object }
 
 export const formInitialState = {
   title: '',

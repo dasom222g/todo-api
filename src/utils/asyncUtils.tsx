@@ -4,11 +4,11 @@ import {
   FETCH_TODOS_ERROR,
   FETCH_TODO_SUCCESS,
   FETCH_TODO_ERROR,
-  ADD_TODO_SUCSESS,
+  ADD_TODO_SUCCESS,
   ADD_TODO_ERROR,
-  UPDATE_TODO,
+  UPDATE_TODO_SUCCESS,
   UPDATE_TODO_ERROR,
-  DELETE_TODO,
+  DELETE_TODO_SUCCESS,
   DELETE_TODO_ERROR,
   todosInitialState,
 } from '../modules/todos'
@@ -39,9 +39,9 @@ export const successState = (
   switch (action.type) {
     case FETCH_TODOS_SUCCESS:
     case FETCH_TODO_SUCCESS:
-    case ADD_TODO_SUCSESS:
-    case UPDATE_TODO:
-    case DELETE_TODO:
+    case ADD_TODO_SUCCESS:
+    case UPDATE_TODO_SUCCESS:
+    case DELETE_TODO_SUCCESS:
       return produce(state, (draft) => {
         draft.isLoading = false
         draft.items = items

@@ -18,11 +18,11 @@ export const FETCH_TODOS_ERROR = 'FETCH_TODOS_ERROR'
 export const FETCH_TODO = 'FETCH_TODO'
 export const FETCH_TODO_SUCCESS = 'FETCH_TODO_SUCCESS'
 export const FETCH_TODO_ERROR = 'FETCH_TODO_ERROR'
-export const ADD_TODO_SUCSESS = 'ADD_TODO_SUCSESS'
+export const ADD_TODO_SUCCESS = 'ADD_TODO_SUCCESS'
 export const ADD_TODO_ERROR = 'ADD_TODO_ERROR'
-export const UPDATE_TODO = 'UPDATE_TODO'
+export const UPDATE_TODO_SUCCESS = 'UPDATE_TODO_SUCCESS'
 export const UPDATE_TODO_ERROR = 'UPDATE_TODO_ERROR'
-export const DELETE_TODO = 'DELETE_TODO'
+export const DELETE_TODO_SUCCESS = 'DELETE_TODO_SUCCESS'
 export const DELETE_TODO_ERROR = 'DELETE_TODO_ERROR'
 
 // action creator
@@ -53,7 +53,7 @@ const fetchTodoError = <T extends object>(e: T): ActionType => ({
 })
 
 const addTodoSuccess = (newItem: TodoDataIDType): ActionType => ({
-  type: ADD_TODO_SUCSESS,
+  type: ADD_TODO_SUCCESS,
   payload: newItem,
   id: newItem.id.toString(),
 })
@@ -64,7 +64,7 @@ const addTodoError = <T extends object>(e: T): ActionType => ({
 })
 
 const updateTodo = (changeItem: TodoDataIDType): ActionType => ({
-  type: UPDATE_TODO,
+  type: UPDATE_TODO_SUCCESS,
   payload: changeItem,
 })
 
@@ -74,7 +74,7 @@ const updateTodoError = <T extends object>(e: T): ActionType => ({
 })
 
 const deleteTodo = (id: string): ActionType => ({
-  type: DELETE_TODO,
+  type: DELETE_TODO_SUCCESS,
   id,
 })
 
@@ -233,15 +233,15 @@ export default function todos(
         draft.isLoading = true
         draft.error = null
       })
-    case ADD_TODO_SUCSESS:
+    case ADD_TODO_SUCCESS:
       return successState(state, action, addItem(state.items, action.payload, action.id))
-    case UPDATE_TODO:
+    case UPDATE_TODO_SUCCESS:
       return successState(state, action, updateItem(state.items, action.payload))
     case FETCH_TODOS_SUCCESS:
       return successState(state, action, getList(action.payload))
     case FETCH_TODO_SUCCESS:
       return successState(state, action, getItem(state.items, action.payload, action.id))
-    case DELETE_TODO:
+    case DELETE_TODO_SUCCESS:
       return successState(state, action, removeItem(state.items, action.id))
     case ADD_TODO_ERROR:
     case FETCH_TODOS_ERROR:
