@@ -9,11 +9,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getTodo, putTodo } from '../modules/todos'
 
 function TodoUpdate() {
-  const { isLoading, data: todos, selectedItem, error } = useSelector(
-    (state: IRootState) => state.todos,
-  )
+  const { isLoading, data: todos, error } = useSelector((state: IRootState) => state.todos)
   const dispatch: ThunkTodoDispatchType = useDispatch()
   const { itemId } = useParams<{ itemId: string }>()
+  const selectItem = todos.items.byId[itemId]
 
   const updateTodo = (updateItem: TodoDataIDType) => {
     dispatch(putTodo(updateItem))
@@ -21,14 +20,10 @@ function TodoUpdate() {
 
   useEffect(() => {
     // 기존에 선택했던 아이템인 경우 다시 데이터 요청 안하고 loading없이 바로 보여줌
-    if (todos.items.byId[itemId] && selectedItem && selectedItem[itemId]) {
-      const { title: _title, description: _desc } = todos.items.byId[itemId]
-      if (_title === selectedItem[itemId].title || _desc === selectedItem[itemId].description)
-        return
-    }
+    if (selectItem && selectItem.description !== undefined) return
     dispatch(getTodo(itemId))
     /* eslint-disable-next-line */
-  }, [dispatch, itemId, todos.items.byId])
+  }, [dispatch, itemId])
 
   if (error) return <NotFound />
   return (
@@ -41,8 +36,8 @@ function TodoUpdate() {
           <Loader height={100} timeout={3000} type="Circles" visible={true} width={80} />
         </div>
       )}
-      {!isLoading && selectedItem && selectedItem[itemId] && (
-        <TodoUpdateForm selectedItem={selectedItem[itemId]} updateTodo={updateTodo} />
+      {!isLoading && selectItem && (
+        <TodoUpdateForm selectItem={selectItem} updateTodo={updateTodo} />
       )}
     </>
   )

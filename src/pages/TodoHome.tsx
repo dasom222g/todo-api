@@ -29,7 +29,10 @@ function TodoHome() {
   }
 
   useEffect(() => {
+    // 이미 조회 했던경우에는 다시 api요청 안함
+    if (allIds.length) return
     dispatch(getTodos())
+    /* eslint-disable-next-line */
   }, [dispatch])
 
   if (error) return <NotFound />

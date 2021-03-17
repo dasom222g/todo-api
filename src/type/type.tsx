@@ -32,8 +32,8 @@ export type NormalDataType = {
 
 export type TodoDataType = {
   title: string
-  description: string
-  isComplete: boolean
+  description?: string
+  isComplete?: boolean
 }
 
 export type TodoDataIDType = {
@@ -46,7 +46,6 @@ export type TodoDataIDType = {
 export type AsyncTodoType = {
   isLoading: boolean
   data: NormalDataType
-  selectedItem: byIdType | null
   error: object | null
 }
 

@@ -64,9 +64,29 @@ export const handlers = [
     const store: string | null = localStorage.getItem(KEY)
     if (store) {
       const data: TodoDataIDType[] = JSON.parse(store)
-      const itemData = data.filter((item) => item.id === itemId)
+      const itemData = data.find((item) => item.id === itemId)
+      const firstResult = {
+        ...itemData,
+        description: null,
+      }
 
-      return res(ctx.status(200), ctx.json(itemData[0]))
+      if (itemData?.description === undefined) {
+        const result = data.map((item) => {
+          if (item.id === itemId) {
+            return {
+              ...item,
+              description: null,
+            }
+          }
+          return { ...item }
+        })
+        localStorage.setItem(KEY, JSON.stringify(result))
+      }
+
+      return res(
+        ctx.status(200),
+        ctx.json(itemData?.description === undefined ? firstResult : itemData),
+      )
     } else {
       return res(ctx.status(404))
     }

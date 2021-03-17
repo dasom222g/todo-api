@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react'
 import useInputs from '../hook/useInputs'
-import { FormType, TodoDataType } from '../type/type'
+import { TodoDataType } from '../type/type'
 
 type TodoDetailFormProps = {
-  selectedItem: TodoDataType
+  selectItem: TodoDataType
   updateNote: (value: string) => void
 }
 
-function TodoDetailForm({ selectedItem, updateNote }: TodoDetailFormProps) {
+function TodoDetailForm({ selectItem, updateNote }: TodoDetailFormProps) {
   const initialState = {
-    title: selectedItem.title,
-    description: selectedItem.description,
+    title: selectItem.title,
+    description: selectItem.description ? selectItem.description : '',
   }
-  const [form, onChange] = useInputs<FormType>(initialState)
+  const [form, onChange] = useInputs(initialState)
   const { description } = form
 
   useEffect(() => {

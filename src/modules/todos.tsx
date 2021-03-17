@@ -108,8 +108,6 @@ export const getTodo = (id: string) => async (dispatch: Dispatch<ActionType>) =>
 export const postTodo = (title: string) => async (dispatch: Dispatch<ActionType>) => {
   const newItem: TodoDataType = {
     title,
-    description: '',
-    isComplete: false,
   }
   try {
     const response = await fetch('api/todos', {
@@ -160,7 +158,6 @@ const todosInitialState: NormalDataType = {
 const initialState: AsyncTodoType = {
   isLoading: false,
   data: todosInitialState,
-  selectedItem: null,
   error: null,
 }
 
@@ -178,20 +175,6 @@ const getList = (data: TodoDataIDType[] | null): NormalDataType => {
       allIds,
       byId,
     },
-  }
-}
-
-const getItemById = (state: AsyncTodoType, item: TodoDataIDType, id: string): byIdType => {
-  const { selectedItem } = state
-  if (selectedItem) {
-    return {
-      ...selectedItem,
-      [id]: item,
-    }
-  } else {
-    return {
-      [id]: item,
-    }
   }
 }
 
@@ -295,8 +278,16 @@ export default function todos(
       return {
         ...state,
         isLoading: false,
-        data: state.data,
-        selectedItem: getItemById(state, action.payload, action.id),
+        data: {
+          ...state.data,
+          items: {
+            ...state.data.items,
+            byId: {
+              ...state.data.items.byId,
+              [action.id]: action.payload,
+            },
+          },
+        },
         error: null,
       }
     case FETCH_TODO_ERROR:
@@ -304,7 +295,6 @@ export default function todos(
         ...state,
         isLoading: false,
         data: state.data,
-        selectedItem: null,
         error: action.error,
       }
     case DELETE_TODO:
