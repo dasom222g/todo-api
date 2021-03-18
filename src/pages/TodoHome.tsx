@@ -1,44 +1,38 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import TodoForm from '../components/TodoForm'
 import TodoList from '../components/TodoList'
-import { deleteTodo, getTodos, postTodo, putTodo, useTodoDispatch, useTodoState } from '../context/TodoContext'
-import { TodoDataType } from '../type/type'
+import { IRootState, ThunkTodoDispatchType } from '../type/type'
 import NotFound from '../components/NotFound'
+import { getTodos, postTodo, putTodo, removeTodo as removeThunk } from '../modules/todos'
+import { useSelector, useDispatch } from 'react-redux'
 
 function TodoHome() {
-  const state = useTodoState()
-  const dispatch = useTodoDispatch()
-  const {data: todoList, error} = state
-
-  const addTodo = (title: string):void => {
-    const {allIds, byId} = todoList.items
-    const byIdArr = allIds.map(id => byId[id])
-    const sameArr = byIdArr.filter(item => item.title === title)
-    if (!sameArr.length) {
-      const newTodoItem: TodoDataType = {
-        title,
-        description: '',
-        isComplete: false
-      }
-      postTodo(dispatch, newTodoItem)
-    }
+  const { items: todos, error } = useSelector((state: IRootState) => state.todos)
+  const { allIds, byId } = todos
+  const dispatch: ThunkTodoDispatchType = useDispatch()
+  const addTodo = (title: string): void => {
+    const sameFilter = allIds.filter((id) => byId[id].title === title)
+    if (sameFilter.length) return
+    dispatch(postTodo(title))
   }
 
   const completeTodo = (id: string): void => {
     const changeItem = {
-      ...todoList.items.byId[id],
-      isComplete: !todoList.items.byId[id].isComplete
+      ...byId[id],
+      isComplete: !byId[id].isComplete,
     }
-    putTodo(dispatch, changeItem)
+    dispatch(putTodo(changeItem))
   }
 
   const removeTodo = (id: string): void => {
-    // const removeItem = todoList.todos.byId[id]
-    deleteTodo(dispatch, id)
+    dispatch(removeThunk(id))
   }
 
   useEffect(() => {
-    getTodos(dispatch)
+    // 이미 조회 했던경우에는 다시 api요청 안함
+    if (allIds.length) return
+    dispatch(getTodos())
+    /* eslint-disable-next-line */
   }, [dispatch])
 
   if (error) return <NotFound />
@@ -47,7 +41,7 @@ function TodoHome() {
       <header>
         <h2 className="todo__title">What’s the Plan for Today?</h2>
       </header>
-      <TodoForm addTodo = {addTodo} />
+      <TodoForm addTodo={addTodo} />
       {/* { isLoading &&
         (
           <div className="loading">
@@ -55,7 +49,7 @@ function TodoHome() {
           </div>
         )
       } */}
-      { todoList ? <TodoList todoList={todoList} completeTodo={completeTodo} removeTodo={removeTodo} /> : <></> }
+      <TodoList todoList={todos} completeTodo={completeTodo} removeTodo={removeTodo} />
     </>
   )
 }

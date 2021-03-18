@@ -5,29 +5,28 @@ import { TodoDataIDType } from '../type/type'
 import TodoDetailForm from './TodoDetailForm'
 
 type TodoUpdateFormProps = {
-  selectedItem: TodoDataIDType
-  updateTodo: (value: TodoDataIDType) =>  void
+  selectItem: TodoDataIDType
+  updateTodo: (value: TodoDataIDType) => void
 }
 
-function TodoUpdateForm({selectedItem, updateTodo}: TodoUpdateFormProps) {
-  const { title: initialTitle, description: initialDescription } = selectedItem
+function TodoUpdateForm({ selectItem, updateTodo }: TodoUpdateFormProps) {
+  const { title: initialTitle, description: initialDescription } = selectItem
   const { history } = useReactRouter()
 
   const initialState = {
     title: initialTitle,
-    description: initialDescription
+    description: initialDescription,
   }
 
   const [form, onChange, reset] = useInputs(initialState)
-  const {title} = form
+  const { title } = form
   const [description, setDescription] = useState(initialDescription)
 
-  const goHome = ():void => {
+  const goHome = (): void => {
     history.push('/')
   }
 
   const updateNote = (description: string) => {
-    console.log('description', description)
     if (/^\s*$/.test(title)) {
       reset()
       return
@@ -53,9 +52,9 @@ function TodoUpdateForm({selectedItem, updateTodo}: TodoUpdateFormProps) {
     }
     if (window.confirm('Are you sure you wish to update this item?')) {
       updateTodo({
-        ...selectedItem,
+        ...selectItem,
         title: title.trim(),
-        description: description.trim()
+        description: description.trim(),
       })
       goHome()
       reset()
@@ -83,19 +82,15 @@ function TodoUpdateForm({selectedItem, updateTodo}: TodoUpdateFormProps) {
               onKeyPress={handlePress}
             />
           </div>
-          <TodoDetailForm selectedItem={selectedItem} updateNote={updateNote} />
+          <TodoDetailForm selectItem={selectItem} updateNote={updateNote} />
           <div className="button-area">
             <button
               type="button"
               className="button-base button-base--cancel"
-              onClick={handleCancel}
-            >
+              onClick={handleCancel}>
               Cancel
             </button>
-            <button
-              type="submit"
-              className="button-base"
-              >
+            <button type="submit" className="button-base">
               Confirm
             </button>
           </div>
@@ -106,7 +101,7 @@ function TodoUpdateForm({selectedItem, updateTodo}: TodoUpdateFormProps) {
 }
 
 TodoUpdateForm.defaultProps = {
-  updateTodo: () => {}
+  updateTodo: () => {},
 }
 
 export default TodoUpdateForm
