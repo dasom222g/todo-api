@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import TodoForm from '../components/TodoForm'
 import TodoList from '../components/TodoList'
 import { IRootState, ThunkTodoDispatchType } from '../type/type'
